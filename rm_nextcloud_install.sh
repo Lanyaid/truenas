@@ -1,0 +1,15 @@
+rm -rf /mnt/system-cache/Nextcloud_conf/nextcloud/apps/*
+rm -rf /mnt/system-cache/Nextcloud_conf/nextcloud/apps/.*
+rm -rf /mnt/system-cache/Nextcloud_conf/nextcloud/apps-pkg/*
+rm -rf /mnt/system-cache/Nextcloud_conf/nextcloud/apps-pkg/.*
+rm -rf /mnt/system-cache/Nextcloud_conf/nextcloud/config/*
+rm -rf /mnt/system-cache/Nextcloud_conf/nextcloud/config/.*
+rm -rf /mnt/system-cache/Nextcloud_conf/nextcloud/data/*
+rm -rf /mnt/system-cache/Nextcloud_conf/nextcloud/data/.*
+rm -rf /mnt/system-cache/Nextcloud_conf/nextcloud/themes/*
+rm -rf /mnt/system-cache/Nextcloud_conf/nextcloud/themes/.*
+rm -rf /mnt/system-cache/Nextcloud_conf/home_root/*
+rm -rf /mnt/system-cache/Nextcloud_conf/nginx/*
+rm -rf /mnt/system-cache/Nextcloud_conf/nginx/.*
+rm -rf /mnt/system-cache/Nextcloud_mysql/*
+rm -rf /mnt/system-cache/Nextcloud_mysql/.*
