@@ -5,11 +5,13 @@ sysrc -f /etc/rc.conf nginx_enable="YES"
 sysrc -f /etc/rc.conf mysql_enable="YES"
 sysrc -f /etc/rc.conf php_fpm_enable="YES"
 
+cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/
+cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.checksum /usr/local/etc/nginx/conf.d/
 # Install fresh nextcloud.conf if user hasn't upgraded
 CPCONFIG=0
 if [ -e "/usr/local/etc/nginx/conf.d/nextcloud.conf" ] ; then
   # Confirm the config doesn't have user-changes. Update if not
-  if [ "$(md5 -q /mnt/repo/etc/nginx/conf.d/nextcloud.conf)" = "$(cat /usr/local/etc/nginx/conf.d/nextcloud.conf.checksum)" ] ; then
+  if [ "$(md5 -q /usr/local/etc/nginx/conf.d/nextcloud.conf)" = "$(cat /usr/local/etc/nginx/conf.d/nextcloud.conf.checksum)" ] ; then
           CPCONFIG=1
   fi
 else
@@ -18,9 +20,8 @@ fi
 
 # Copy over the nginx config template
 if [ "$CPCONFIG" = "1" ] ; then
-  cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/
   mv /usr/local/etc/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/nextcloud.conf
-  md5 -q /usr/local/etc/nginx/conf.d/nextcloud.conf > /mnt/repo/nginx/conf.d/nextcloud.conf.checksum
+  #md5 -q /usr/local/etc/nginx/conf.d/nextcloud.conf > /mnt/repo/nginx/conf.d/nextcloud.conf.checksum
 fi
 cp /mnt/repo/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/
 cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
