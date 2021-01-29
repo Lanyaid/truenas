@@ -31,7 +31,7 @@ iocage create -n "${JAIL_NAME}" -r "${RELEASE}"-RELEASE \
   allow_raw_sockets="1" \
   boot="1" \
   nat="1" \
-  nat_forwards="tcp(${PORT_GUEST}:${PORT_HOST}" \
+  nat_forwards="tcp(${PORT_GUEST}:${PORT_HOST})" \
   mac_prefix="428d5c" \
   vnet0_mac="428d5c6cb0ba 428d5c6cb0bb" \
   host_hostname="${JAIL_NAME}" \
