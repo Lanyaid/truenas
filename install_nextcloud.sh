@@ -5,6 +5,8 @@ RELEASE="11.4"
 IP_ADDR="172.16.0.2"
 MASK_ADDR="30"
 DEFAULT_ROUTER="172.16.0.1"
+HOST_PORT=8512
+GUEST_PORT=80
 DHCP="0"
 PHP_PACKAGES="php74 php74-bz2 php74-ctype php74-curl php74-dom php74-exif php74-fileinfo php74-filter php74-gd php74-iconv php74-intl php74-json php74-ldap php74-mbstring php74-opcache php74-openssl php74-pdo php74-pdo_mysql php74-pecl-APCu php74-pecl-imagick php74-pecl-redis php74-posix php74-session php74-simplexml php74-xml php74-xmlreader php74-xmlwriter php74-xsl php74-zip php74-zlib php74-bcmath php74-gmp"
 PACKAGES="nano wget ca_root_nss nginx mariadb104-server redis tree sudo git ${PHP_PACKAGES}"
@@ -33,7 +35,7 @@ iocage create -n "${JAIL_NAME}" -r "${RELEASE}"-RELEASE \
   allow_raw_sockets="1" \
   boot="1" \
   nat="1" \
-  nat_forwards="tcp(80:8412)" \
+  nat_forwards="tcp(${GUEST_PORT}:${HOST_PORT})" \
   mac_prefix="428d5c" \
   vnet0_mac="428d5c6cb0ba 428d5c6cb0bb" \
   host_hostname="${JAIL_NAME}" \
