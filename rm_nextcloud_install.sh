@@ -10,7 +10,9 @@ rm -r /mnt/system_cache/NextCloud_conf/nextcloud/themes/*
 rm -r /mnt/system_cache/NextCloud_conf/nextcloud/themes/.*
 rm -r /mnt/system_cache/NextCloud_conf/php-fpm.d/.*
 rm -r /mnt/system_cache/NextCloud_conf/php-fpm.d/.*
-rm -r /mnt/system_cache/NextCloud_conf/home_root/*
+rm -r /mnt/system_cache/NextCloud_conf/home_root/db*
+rm -r /mnt/system_cache/NextCloud_conf/home_root/nc*
+rm -r /mnt/system_cache/NextCloud_conf/home_root/occ.sh
 rm -r /mnt/system_cache/NextCloud_conf/nginx/*
 rm -r /mnt/system_cache/NextCloud_conf/nginx/.*
 rm -r /mnt/system_cache/NextCloud_mysql/*
