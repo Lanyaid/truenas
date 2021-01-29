@@ -18,7 +18,8 @@ fi
 
 # Copy over the nginx config template
 if [ "$CPCONFIG" = "1" ] ; then
-  cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/nextcloud.conf
+  cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/
+  mv /usr/local/etc/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/nextcloud.conf
   md5 -q /usr/local/etc/nginx/conf.d/nextcloud.conf > /mnt/repo/nginx/conf.d/nextcloud.conf.checksum
 fi
 cp /mnt/repo/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/
