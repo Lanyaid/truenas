@@ -5,8 +5,6 @@ RELEASE="11.4"
 IP_ADDR="172.16.0.2"
 MASK_ADDR="30"
 DEFAULT_ROUTER="172.16.0.1"
-HOST_PORT=8512
-GUEST_PORT=80
 DHCP="0"
 PHP_PACKAGES="php74 php74-bz2 php74-ctype php74-curl php74-dom php74-exif php74-fileinfo php74-filter php74-gd php74-iconv php74-intl php74-json php74-ldap php74-mbstring php74-opcache php74-openssl php74-pdo php74-pdo_mysql php74-pecl-APCu php74-pecl-imagick php74-pecl-redis php74-posix php74-session php74-simplexml php74-xml php74-xmlreader php74-xmlwriter php74-xsl php74-zip php74-zlib php74-bcmath php74-gmp"
 PACKAGES="nano wget ca_root_nss nginx mariadb104-server redis tree sudo git ${PHP_PACKAGES}"
@@ -35,7 +33,7 @@ iocage create -n "${JAIL_NAME}" -r "${RELEASE}"-RELEASE \
   allow_raw_sockets="1" \
   boot="1" \
   nat="1" \
-  nat_forwards="tcp(${GUEST_PORT}:${HOST_PORT})" \
+  nat_forwards="tcp(80:8412)" \
   mac_prefix="428d5c" \
   vnet0_mac="428d5c6cb0ba 428d5c6cb0bb" \
   host_hostname="${JAIL_NAME}" \
@@ -52,36 +50,33 @@ iocage restart "${JAIL_NAME}"
 
 echo -e "\nFolder and user creation, permission and mounting\n"
 #iocage folder creation and mounting
-#mkdir outside jail
-for PATH in $( cat ./config/outside_path.conf)
-  do
-  echo -e "New folder creation outside the jail : ${PATH}"
-  if [[ ! -d "${PATH}" ]]
-    then
-    mkdir -p "${PATH}"
-    else
-    ls "{PATH}"
-  fi
-  if (( $? == "0" ))
-    then
-    echo -e "New folder creation outside the jail : ${PATH} [OK]"
-    else
-    echo -e "New folder creation outside the jail : ${PATH} [NOK]"
-  fi
-done 
+#mkdir outside the jail
 
-#mkdir inside_jail
-for PATH in $( cat ./config/inside_path.conf )
-  do
-  echo -e "New folder creation inside the jail : ${PATH}"
-  iocage exec "${JAIL_NAME}" "mkdir -p ${PATH}"
-  if (( $? == "0" ))
-    then
-    echo -e "New folder creation inside the jail : ${PATH} [OK]"
-    else
-    echo -e "New folder creation inside the jail : ${PATH} [NOK]"
-  fi
-done
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud
+mkdir -p /mnt/system_cache/NextCloud_conf/nginx
+mkdir -p /mnt/system_cache/NextCloud_conf/php-fpm.d
+mkdir -p /mnt/system_cache/NextCloud_conf/mysql
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/apps
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/apps-pkg
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/config
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/data
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/themes
+
+#mkdir inside the jail
+
+iocage exec "${JAIL_NAME}" "mkdir -p /root"
+iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/apps"
+iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/apps-pkg"
+iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/config"
+iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/data"
+iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/themes"
+iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/nginx"
+iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/nginx/conf.d"
+#iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/apache"
+iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/php-fpm.d"
+iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/mysql"
+iocage exec "${JAIL_NAME}" "mkdir -p /var/db/mysql"
+iocage exec "${JAIL_NAME}" "mkdir -p /mnt/repo"
 
 #zfs set primarycache=metadata system_cache/NextCloud_data
 
@@ -99,13 +94,19 @@ iocage exec "${JAIL_NAME}" "chmod 770 /usr/local/www"
 iocage exec "${JAIL_NAME}" "chown -R ${USER2}:${GROUP2} /var/db/mysql"
 iocage exec "${JAIL_NAME}" "chmod 770 /var/db/mysql"
 
-#mounting
-
-for MOUNT_PATH in $( cat ./config/mount_path.conf)
-  do
-  echo -e "New mount creation inside the jail : ${MOUNT_PATH}"
-  iocage fstab -a "${JAIL_NAME}" "${MOUNT_PATH}"
-done
+#mounting fs
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nextcloud/apps" "/usr/local/www/nextcloud/apps" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nextcloud/apps-pkg" "/usr/local/www/nextcloud/apps-pkg" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nextcloud/config" "/usr/local/www/nextcloud/config" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nextcloud/themes" "/usr/local/www/nextcloud/themes" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_data" "/usr/local/www/nextcloud/data" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/home_root" "/root" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nginx" "/usr/local/etc/nginx" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/php-fpm.d" "/usr/local/etc/php-fpm.d" nullfs rw 0 0
+#iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/repo" "/mnt/repo" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_mysql" "/var/db/mysql" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/mysql" "/usr/local/etc/mysql" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/repo" "/mnt/repo" nullfs rw 0 0
 
 #update jail and package install
 echo -e "\nJail update and packages install\n"
@@ -137,6 +138,7 @@ iocage exec "${JAIL_NAME}" "service nginx start"
 iocage exec "${JAIL_NAME}" "service php-fpm start"
 iocage exec "${JAIL_NAME}" "service redis start"
 
-iocage exec "${JAIL_NAME}" "cp /mnt/repo/post_install.sh /root"
+cp /mnt/system_cache/NextCloud_conf/repo/post_install.sh /mnt/system_cache/iocage/jails/"${JAIL_NAME}"/root/root
+
 iocage exec "${JAIL_NAME}" "chmod +x /root/post_install.sh"
-#iocage exec "${JAIL_NAME}" "/root/post_install.sh"
+iocage exec "${JAIL_NAME}" "/root/post_install.sh"
