@@ -70,6 +70,7 @@ iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/config"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/data"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/themes"
 
+iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/nginx"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/nginx/conf.d"
 #iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/apache"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/php-fpm.d"
