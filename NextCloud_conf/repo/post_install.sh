@@ -142,4 +142,3 @@ echo "Database Password: $PASS" >> /root/PLUGIN_INFO
 
 echo "Nextcloud Admin User: $NCUSER" >> /root/PLUGIN_INFO
 echo "Nextcloud Admin Password: $NCPASS" >> /root/PLUGIN_INFO
-vi 

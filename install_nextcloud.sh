@@ -51,6 +51,10 @@ iocage restart "${JAIL_NAME}"
 echo -e "\nFolder and user creation, permission and mounting\n"
 #iocage folder creation and mounting
 #mkdir
+
+mkdir -p /mnt/system_cache/NextCloud_conf{/nextcloud,/nginx,/php-fpm.d,/mysql}
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud{/apps,/apps-pkg,/config,/data,/themes}
+
 iocage exec "${JAIL_NAME}" "mkdir -p /root"
 
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/apps"
@@ -59,8 +63,8 @@ iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/config"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/data"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/themes"
 
-#iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/nginx"
-iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/apache"
+iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/nginx"
+#iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/apache"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/php-fpm.d"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/mysql"
 
@@ -68,7 +72,7 @@ iocage exec "${JAIL_NAME}" "mkdir -p /var/db/mysql"
 
 iocage exec "${JAIL_NAME}" "mkdir -p /mnt/repo"
 
-zfs set primarycache=metadata system_cache/NextCloud_data"
+#zfs set primarycache=metadata system_cache/NextCloud_data
 
 #create user and group
 #iocage exec "${JAIL_NAME}" "pw groupadd -n ${GROUP} -g ${GID}"
