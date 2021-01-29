@@ -144,7 +144,7 @@ iocage exec "${JAIL_NAME}" "service nginx start"
 iocage exec "${JAIL_NAME}" "service php-fpm start"
 iocage exec "${JAIL_NAME}" "service redis start"
 
-cp /mnt/system_cache/NextCloud_conf/repo/post_install.sh /mnt/system_cache/iocage/jails/nextcloud/root/root
+cp /mnt/system_cache/NextCloud_conf/repo/post_install.sh /mnt/system_cache/iocage/jails/"${JAIL_NAME}"/root/root
 
 iocage exec "${JAIL_NAME}" "chmod +x /root/post_install.sh"
 iocage exec "${JAIL_NAME}" "/root/post_install.sh"

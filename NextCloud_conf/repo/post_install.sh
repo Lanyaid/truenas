@@ -19,10 +19,10 @@ fi
 # Copy over the nginx config template
 if [ "$CPCONFIG" = "1" ] ; then
   cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/nextcloud.conf
-  md5 -q /usr/local/etc/nginx/conf.d/nextcloud.conf > /usr/local/etc/nginx/conf.d/nextcloud.conf.checksum
+  md5 -q /usr/local/etc/nginx/conf.d/nextcloud.conf > /mnt/repo/nginx/conf.d/nextcloud.conf.checksum
 fi
-
-cp /mnt/repo/etc/php.ini-production /usr/local/etc/php.ini
+cp /mnt/repo/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/
+cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
 # Modify opcache settings in php.ini according to Nextcloud documentation (remove comment and set recommended value)
 # https://docs.nextcloud.com/server/15/admin_manual/configuration_server/server_tuning.html#enable-php-opcache
 sed -i '' 's/.*opcache.enable=.*/opcache.enable=1/' /usr/local/etc/php.ini
