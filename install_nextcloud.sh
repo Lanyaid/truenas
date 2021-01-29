@@ -52,8 +52,15 @@ echo -e "\nFolder and user creation, permission and mounting\n"
 #iocage folder creation and mounting
 #mkdir
 
-mkdir -p /mnt/system_cache/NextCloud_conf{/nextcloud,/nginx,/php-fpm.d,/mysql}
-mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud{/apps,/apps-pkg,/config,/data,/themes}
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud
+mkdir -p /mnt/system_cache/NextCloud_conf/nginx
+mkdir -p /mnt/system_cache/NextCloud_conf/php-fpm.d
+mkdir -p /mnt/system_cache/NextCloud_conf/mysql}
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/apps
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/apps-pkg
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/config
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/data
+mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/themes
 
 iocage exec "${JAIL_NAME}" "mkdir -p /root"
 
