@@ -5,15 +5,13 @@ RELEASE="11.4"
 IP_ADDR="172.16.0.2"
 MASK_ADDR="30"
 DEFAULT_ROUTER="172.16.0.1"
+PORT_GUEST="80"
+PORT_HOST="8415"
 DHCP="0"
 PHP_PACKAGES="php74 php74-bz2 php74-ctype php74-curl php74-dom php74-exif php74-fileinfo php74-filter php74-gd php74-iconv php74-intl php74-json php74-ldap php74-mbstring php74-opcache php74-openssl php74-pdo php74-pdo_mysql php74-pecl-APCu php74-pecl-imagick php74-pecl-redis php74-posix php74-session php74-simplexml php74-xml php74-xmlreader php74-xmlwriter php74-xsl php74-zip php74-zlib php74-bcmath php74-gmp"
 PACKAGES="nano wget ca_root_nss nginx mariadb104-server redis tree sudo git ${PHP_PACKAGES}"
 SYSRC="nginx mysql php_fpm redis"
 SERVICES=$( echo -e "nginx\nmysql-server\nphp-fpm\nredis" )
-QUERY_CREATE_USER="CREATE DATABASE nextcloud;
-CREATE USER 'nextcloud_dbadmin'@'localhost' IDENTIFIED BY 'your-password-here';
-GRANT ALL ON nextcloud.* TO 'nextcloud_admin'@'localhost';
-FLUSH PRIVILEGES;"
  
 USER="www"
 UID="80"
@@ -33,14 +31,14 @@ iocage create -n "${JAIL_NAME}" -r "${RELEASE}"-RELEASE \
   allow_raw_sockets="1" \
   boot="1" \
   nat="1" \
-  nat_forwards="tcp(80:8412)" \
+  nat_forwards="tcp(${PORT_GUEST}:${PORT_HOST}" \
   mac_prefix="428d5c" \
   vnet0_mac="428d5c6cb0ba 428d5c6cb0bb" \
   host_hostname="${JAIL_NAME}" \
   host_hostuuid="${JAIL_NAME}" \
   allow_mount_devfs="1" \
   allow_raw_sockets="1" \
-  jail_zfs_dataset="iocage/jails/nextcloud/data"
+  jail_zfs_dataset="iocage/jails/${JAIL_NAME}/data"
 
 
 echo -e "\nRestarting jail ${JAIL_NAME}\n################################\n"
@@ -54,6 +52,7 @@ echo -e "\nFolder and user creation, permission and mounting\n"
 
 mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud
 mkdir -p /mnt/system_cache/NextCloud_conf/nginx
+mkdir -p /mnt/system_cache/NextCloud_conf/nginx/conf.d
 mkdir -p /mnt/system_cache/NextCloud_conf/php-fpm.d
 mkdir -p /mnt/system_cache/NextCloud_conf/mysql
 mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/apps
@@ -72,7 +71,6 @@ iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/data"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/themes"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/nginx"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/nginx/conf.d"
-#iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/apache"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/php-fpm.d"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/mysql"
 iocage exec "${JAIL_NAME}" "mkdir -p /var/db/mysql"
@@ -103,7 +101,6 @@ iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_data" "/usr/local/ww
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/home_root" "/root" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nginx" "/usr/local/etc/nginx" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/php-fpm.d" "/usr/local/etc/php-fpm.d" nullfs rw 0 0
-#iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/repo" "/mnt/repo" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_mysql" "/var/db/mysql" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/mysql" "/usr/local/etc/mysql" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/repo" "/mnt/repo" nullfs rw 0 0
@@ -138,7 +135,6 @@ iocage exec "${JAIL_NAME}" "service nginx start"
 iocage exec "${JAIL_NAME}" "service php-fpm start"
 iocage exec "${JAIL_NAME}" "service redis start"
 
-cp /mnt/system_cache/NextCloud_conf/repo/post_install.sh /mnt/system_cache/iocage/jails/"${JAIL_NAME}"/root/root
-
+iocage exec "${JAIL_NAME}" "cp /mnt/repo/post_install.sh /root"
 iocage exec "${JAIL_NAME}" "chmod +x /root/post_install.sh"
-iocage exec "${JAIL_NAME}" "/root/post_install.sh"
+#iocage exec "${JAIL_NAME}" "/root/post_install.sh"
