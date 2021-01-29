@@ -7,9 +7,13 @@ MASK_ADDR="30"
 DEFAULT_ROUTER="172.16.0.1"
 DHCP="0"
 PHP_PACKAGES="php74 php74-bz2 php74-ctype php74-curl php74-dom php74-exif php74-fileinfo php74-filter php74-gd php74-iconv php74-intl php74-json php74-ldap php74-mbstring php74-opcache php74-openssl php74-pdo php74-pdo_mysql php74-pecl-APCu php74-pecl-imagick php74-pecl-redis php74-posix php74-session php74-simplexml php74-xml php74-xmlreader php74-xmlwriter php74-xsl php74-zip php74-zlib php74-bcmath php74-gmp"
-PACKAGES="nano wget ca_root_nss nginx mariadb104-server redis tree ${PHP_PACKAGES}"
+PACKAGES="nano wget ca_root_nss nginx mariadb104-server redis tree sudo git ${PHP_PACKAGES}"
 SYSRC="nginx mysql php_fpm redis"
 SERVICES=$( echo -e "nginx\nmysql-server\nphp-fpm\nredis" )
+QUERY_CREATE_USER="CREATE DATABASE nextcloud;
+CREATE USER 'nextcloud_dbadmin'@'localhost' IDENTIFIED BY 'your-password-here';
+GRANT ALL ON nextcloud.* TO 'nextcloud_admin'@'localhost';
+FLUSH PRIVILEGES;"
  
 USER="www"
 UID="80"
@@ -44,23 +48,27 @@ echo -e "\nRestarting jail ${JAIL_NAME}\n################################\n"
 #restarting jail
 iocage restart "${JAIL_NAME}"
 
-echo -e "Folder and user creation, permission and mounting\n"
+echo -e "\nFolder and user creation, permission and mounting\n"
 #iocage folder creation and mounting
 #mkdir
+iocage exec "${JAIL_NAME}" "mkdir -p /root"
+
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/apps"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/apps-pkg"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/config"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/data"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/www/nextcloud/themes"
 
-iocage exec "${JAIL_NAME}" "mkdir -p /root"
-
-iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/nginx"
+#iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/nginx"
+iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/apache"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/php-fpm.d"
-
-iocage exec "${JAIL_NAME}" "mkdir -p /var/db/mysql"
 iocage exec "${JAIL_NAME}" "mkdir -p /usr/local/etc/mysql"
 
+iocage exec "${JAIL_NAME}" "mkdir -p /var/db/mysql"
+
+iocage exec "${JAIL_NAME}" "mkdir -p /mnt/repo"
+
+zfs set primarycache=metadata system_cache/NextCloud_data"
 
 #create user and group
 #iocage exec "${JAIL_NAME}" "pw groupadd -n ${GROUP} -g ${GID}"
@@ -69,8 +77,6 @@ iocage exec "${JAIL_NAME}" "pw groupadd -n ${GROUP2} -g ${GID2}"
 iocage exec "${JAIL_NAME}" "pw useradd -n ${USER2} -u ${UID2} -d /nonexistent -s /usr/sbin/nologin"
 #iocage exec "${JAIL_NAME}" "pw groupmod ${GROUP} -m ${USER}"
 iocage exec "${JAIL_NAME}" "pw groupmod ${GROUP2} -m ${USER2}"
-
-cp /mnt/system_cache/NextCloud_conf/php.ini-production /mnt/system_cache/iocage/jails/nextcloud/root/usr/local/etc/php.ini-production
 
 #chown & chmod
 iocage exec "${JAIL_NAME}" "chown -R ${USER}:${GROUP} /usr/local/www"
@@ -90,9 +96,12 @@ iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/home_root" "/ro
 
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nginx" "/usr/local/etc/nginx" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/php-fpm.d" "/usr/local/etc/php-fpm.d" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/repo" "/mnt/repo" nullfs rw 0 0
 
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_mysql" "/var/db/mysql" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/mysql" "/usr/local/etc/mysql" nullfs rw 0 0
+
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/repo" "/mnt/repo" nullfs rw 0 0
 
 #update jail and package install
 echo -e "\nJail update and packages install\n"
@@ -103,7 +112,7 @@ iocage exec "${JAIL_NAME}" "pkg upgrade"
 iocage exec "${JAIL_NAME}" "pkg install -y wget ${PACKAGES}"
 
 iocage exec "${JAIL_NAME}" "cd /tmp && wget https://download.nextcloud.com/server/releases/latest.tar.bz2"
-iocage exec "${JAIL_NAME}" "tar -xf /tmp/latest.tar.bz2 -C /usr/local/www
+iocage exec "${JAIL_NAME}" "tar -xf /tmp/latest.tar.bz2 -C /usr/local/www"
 
 #chown & chmod
 iocage exec "${JAIL_NAME}" "chown -R ${USER}:${GROUP} /usr/local/www"
@@ -119,11 +128,12 @@ iocage exec "${JAIL_NAME}" "sysrc php_fpm_enable=yes"
 iocage exec "${JAIL_NAME}" "sysrc redis_enable=yes"
 
 
-for SERVICE_NAME in "${SERVICES}"; do
-  iocage exec "${JAIL_NAME}" service "${SERVICE_NAME}" start
-done
-#iocage exec "${JAIL_NAME}" "service mysql-server start"
-#iocage exec "${JAIL_NAME}" "service nginx start"
-#iocage exec "${JAIL_NAME}" "service php-fpm start"
-#iocage exec "${JAIL_NAME}" "service redis start"
+iocage exec "${JAIL_NAME}" "service mysql-server start"
+iocage exec "${JAIL_NAME}" "service nginx start"
+iocage exec "${JAIL_NAME}" "service php-fpm start"
+iocage exec "${JAIL_NAME}" "service redis start"
 
+cp /mnt/system_cache/NextCloud_conf/repo/post_install.sh /mnt/system_cache/iocase/jails/nextcloud/root/root
+
+iocage exec "${JAIL_NAME}" "chmod +x /root/post_install.sh"
+iocage exec "${JAIL_NAME}" "/root/post_install.sh"
