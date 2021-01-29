@@ -56,7 +56,12 @@ echo -e "\nFolder and user creation, permission and mounting\n"
 for PATH in $( cat ./config/outside_path.conf)
   do
   echo -e "New folder creation outside the jail : ${PATH}"
-  mkdir -p "${PATH}"
+  if [[ ! -d "${PATH}" ]]
+    then
+    mkdir -p "${PATH}"
+    else
+    ls "{PATH}"
+  fi
   if (( $? == "0" ))
     then
     echo -e "New folder creation outside the jail : ${PATH} [OK]"
