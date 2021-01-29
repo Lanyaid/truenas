@@ -63,7 +63,7 @@ NCPASS=`cat /root/ncpassword`
 
 if [ -e "/root/.mysql_secret" ] ; then
    # Mysql > 57 sets a default PW on root
-   TMPPW=$(cat /root/.mysql_secret | grep -v "^#")
+   set TMPPW=`cat /root/.mysql_secret | grep -v "^#"`
    echo "SQL Temp Password: $TMPPW"
 
 # Configure mysql
