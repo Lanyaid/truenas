@@ -1,4 +1,4 @@
-./plex_remove.sh
-./torrent_remove.sh
-./nextcloud_remove.sh
-./reverse-proxy_remove.sh
+./remove_plex.sh
+./remove_torrent.sh
+./remove_nextcloud.sh
+./remove_reverse-proxy.sh

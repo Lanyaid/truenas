@@ -55,7 +55,7 @@ echo -e "\nFolder and user creation, permission and mounting\n"
 mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud
 mkdir -p /mnt/system_cache/NextCloud_conf/nginx
 mkdir -p /mnt/system_cache/NextCloud_conf/php-fpm.d
-mkdir -p /mnt/system_cache/NextCloud_conf/mysql}
+mkdir -p /mnt/system_cache/NextCloud_conf/mysql
 mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/apps
 mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/apps-pkg
 mkdir -p /mnt/system_cache/NextCloud_conf/nextcloud/config
