@@ -80,66 +80,62 @@ iocage exec "${JAIL_NAME}" mkdir -p /mnt/repo
 
 #create user and group
 #iocage exec "${JAIL_NAME}" pw groupadd -n "${GROUP}" -g "${GID}"
-iocage exec "${JAIL_NAME}" pw groupadd -n "${GROUP2}" -g "${GID2}"
+iocage exec "${JAIL_NAME}" "pw groupadd -n ${GROUP2} -g ${GID2}"
 #iocage exec "${JAIL_NAME}" pw useradd -n "${USER}" -u "${UID}" -d /nonexistent -s /usr/sbin/nologin
-iocage exec "${JAIL_NAME}" pw useradd -n "${USER2}" -u "${UID2}" -d /nonexistent -s /usr/sbin/nologin
+iocage exec "${JAIL_NAME}" "pw useradd -n ${USER2} -u ${UID2} -d /nonexistent -s /usr/sbin/nologin"
 #iocage exec "${JAIL_NAME}" pw groupmod "${GROUP}" -m "${USER}"
-iocage exec "${JAIL_NAME}" pw groupmod "${GROUP2}" -m "${USER2}"
+iocage exec "${JAIL_NAME}" "pw groupmod ${GROUP2} -m ${USER2}"
 
 #chown & chmod
-iocage exec "${JAIL_NAME}" chown -R ${USER}:${GROUP} /usr/local/www
-iocage exec "${JAIL_NAME}" chmod 770 /usr/local/www
-iocage exec "${JAIL_NAME}" chown -R ${USER2}:${GROUP2} /var/db/mysql
-iocage exec "${JAIL_NAME}" chmod 770 /var/db/mysql
+iocage exec "${JAIL_NAME}" "chown -R ${USER}:${GROUP} /usr/local/www"
+iocage exec "${JAIL_NAME}" "chmod 770 /usr/local/www"
+iocage exec "${JAIL_NAME}" "chown -R ${USER2}:${GROUP2} /var/db/mysql"
+iocage exec "${JAIL_NAME}" "chmod 770 /var/db/mysql"
 
 #mounting fs
-iocage fstab -a "${JAIL_NAME}" /mnt/system_cache/NextCloud_conf/nextcloud/apps /usr/local/www/nextcloud/apps nullfs rw 0 
-iocage fstab -a "${JAIL_NAME}" /mnt/system_cache/NextCloud_conf/nextcloud/apps-pkg /usr/local/www/nextcloud/apps-pkg nullfs rw 0 
-iocage fstab -a "${JAIL_NAME}" /mnt/system_cache/NextCloud_conf/nextcloud/config /usr/local/www/nextcloud/config nullfs rw 0 
-iocage fstab -a "${JAIL_NAME}" /mnt/system_cache/NextCloud_conf/nextcloud/themes /usr/local/www/nextcloud/themes nullfs rw 0 
-iocage fstab -a "${JAIL_NAME}" /mnt/system_cache/NextCloud_data /usr/local/www/nextcloud/data nullfs rw 0 
-iocage fstab -a "${JAIL_NAME}" /mnt/system_cache/NextCloud_conf/home_root /root nullfs rw 0 
-iocage fstab -a "${JAIL_NAME}" /mnt/system_cache/NextCloud_conf/nginx /usr/local/etc/nginx nullfs rw 0 
-iocage fstab -a "${JAIL_NAME}" /mnt/system_cache/NextCloud_conf/php-fpm.d /usr/local/etc/php-fpm.d nullfs rw 0 
-iocage fstab -a "${JAIL_NAME}" /mnt/system_cache/NextCloud_mysql /var/db/mysql nullfs rw 0 
-iocage fstab -a "${JAIL_NAME}" /mnt/system_cache/NextCloud_conf/mysql /usr/local/etc/mysql nullfs rw 0 
-iocage fstab -a "${JAIL_NAME}" /mnt/system_cache/NextCloud_conf/repo /mnt/repo nullfs rw 0 
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nextcloud/apps /usr/local/www/nextcloud/apps nullfs rw 0 "
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nextcloud/apps-pkg /usr/local/www/nextcloud/apps-pkg nullfs rw 0 "
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nextcloud/config /usr/local/www/nextcloud/config nullfs rw 0 "
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nextcloud/themes /usr/local/www/nextcloud/themes nullfs rw 0 "
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_data /usr/local/www/nextcloud/data nullfs rw 0 "
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/home_root /root nullfs rw 0 "
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nginx /usr/local/etc/nginx nullfs rw 0 "
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/php-fpm.d /usr/local/etc/php-fpm.d nullfs rw 0 "
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_mysql /var/db/mysql nullfs rw 0 "
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/mysql /usr/local/etc/mysql nullfs rw 0 "
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/repo /mnt/repo nullfs rw 0 "
 
 #update jail and package install
 echo -e "\nJail update and packages install\n"
 
-iocage exec "${JAIL_NAME}" pkg-static install -y pkg
-iocage exec "${JAIL_NAME}" pkg update
-iocage exec "${JAIL_NAME}" pkg upgrade
-iocage exec "${JAIL_NAME}" pkg install -y wget "${PACKAGES}"
+iocage exec "${JAIL_NAME}" "pkg-static install -y pkg"
+iocage exec "${JAIL_NAME}" "pkg update"
+iocage exec "${JAIL_NAME}" "pkg upgrade"
+iocage exec "${JAIL_NAME}" "pkg install -y wget ${PACKAGES}"
 
-iocage exec "${JAIL_NAME}" cd /tmp && wget https://download.nextcloud.com/server/releases/latest.tar.bz2
-iocage exec "${JAIL_NAME}" tar -xf /tmp/latest.tar.bz2 -C /usr/local/www
+iocage exec "${JAIL_NAME}" "cd /tmp && wget https://download.nextcloud.com/server/releases/latest.tar.bz2"
+iocage exec "${JAIL_NAME}" "tar -xf /tmp/latest.tar.bz2 -C /usr/local/www"
 
 #chown & chmod
-iocage exec "${JAIL_NAME}" chown -R "${USER}":"${GROUP}" /usr/local/www
-iocage exec "${JAIL_NAME}" chmod 770 /usr/local/www
-iocage exec "${JAIL_NAME}" chmod 770 /usr/local/www/nextcloud
+iocage exec "${JAIL_NAME}" "chown -R ${USER}:${GROUP} /usr/local/www"
+iocage exec "${JAIL_NAME}" "chmod 770 /usr/local/www"
+iocage exec "${JAIL_NAME}" "chmod 770 /usr/local/www/nextcloud"
 
-#for SYSRC_NAME in "${SYSRC}"; do
-#  iocage exec "${JAIL_NAME}" sysrc "${SYSRC_NAME}_enable"=yes
-#done
-iocage exec "${JAIL_NAME}" sysrc nginx_enable=yes
-iocage exec "${JAIL_NAME}" sysrc mysql_enable=yes
-iocage exec "${JAIL_NAME}" sysrc php_fpm_enable=yes
-iocage exec "${JAIL_NAME}" sysrc redis_enable=yes
+iocage exec "${JAIL_NAME}" "sysrc nginx_enable=yes"
+iocage exec "${JAIL_NAME}" "sysrc mysql_enable=yes"
+iocage exec "${JAIL_NAME}" "sysrc php_fpm_enable=yes"
+iocage exec "${JAIL_NAME}" "sysrc redis_enable=yes"
 
 
-iocage exec "${JAIL_NAME}" service mysql-server start
-iocage exec "${JAIL_NAME}" service nginx start
-iocage exec "${JAIL_NAME}" service php-fpm start
-iocage exec "${JAIL_NAME}" service redis start
+iocage exec "${JAIL_NAME}" "service mysql-server start"
+iocage exec "${JAIL_NAME}" "service nginx start"
+iocage exec "${JAIL_NAME}" "service php-fpm start"
+iocage exec "${JAIL_NAME}" "service redis start"
 
-iocage exec "${JAIL_NAME}" cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/
-iocage exec "${JAIL_NAME}" cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.checksum /usr/local/etc/nginx/conf.d/
-
-iocage exec "${JAIL_NAME}" cp /mnt/repo/post_install.sh /root
-iocage exec "${JAIL_NAME}" chmod +x /root/post_install.sh
+iocage exec "${JAIL_NAME}" "cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/"
+iocage exec "${JAIL_NAME}" "cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.checksum /usr/local/etc/nginx/conf.d/"
+iocage exec "${JAIL_NAME}" "cp /mnt/repo/post_install.sh /root"
+iocage exec "${JAIL_NAME}" "chmod +x /root/post_install.sh"
 iocage exec "${JAIL_NAME}" "/root/post_install.sh"
 
 iocage restart "${JAIL_NAME}"
