@@ -1,13 +1,5 @@
 #!/bin/sh
 
-# Enable the service
-sysrc -f /etc/rc.conf nginx_enable="YES"
-sysrc -f /etc/rc.conf mysql_enable="YES"
-sysrc -f /etc/rc.conf php_fpm_enable="YES"
-
-cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/
-cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.checksum /usr/local/etc/nginx/conf.d/
-# Install fresh nextcloud.conf if user hasn't upgraded
 CPCONFIG=0
 if [ -e "/usr/local/etc/nginx/conf.d/nextcloud.conf" ] ; then
   # Confirm the config doesn't have user-changes. Update if not
@@ -60,47 +52,9 @@ cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 > /root/dbpasswor
 cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 > /root/ncpassword
 set PASS=`cat /root/dbpassword`
 set NCPASS=`cat /root/ncpassword`
+set TMPPW=`cat /root/.mysql_secret | grep -v "^#"`
+echo "SQL Temp Password: ${TMPPW}"
 
-if [ -e "/root/.mysql_secret" ] ; then
-  # Mysql > 57 sets a default PW on root
-  set TMPPW=`cat /root/.mysql_secret | grep -v "^#"`
-  echo "SQL Temp Password: ${TMPPW}"
-
-  # Configure mysql
-  mysql -u root -p"${TMPPW}" --connect-expired-password <<-EOF
-  ALTER USER 'root'@'localhost' IDENTIFIED BY "${PASS}";
-  CREATE USER \'"${USER}"\'@'localhost' IDENTIFIED BY "${PASS}";
-  GRANT ALL PRIVILEGES ON "${DB}".* TO \'"${USER}"\'@'localhost' WITH GRANT OPTION;
-  GRANT ALL PRIVILEGES ON "${DB}".* TO \'"${USER}"\'@'localhost';
-  FLUSH PRIVILEGES;
-  -EOF
-
-  # Make the default log directory
-  mkdir /var/log/zm
-  chown www:www /var/log/zm
-  
-  else
-  # Mysql <= 56 does not
-
-  # Configure mysql
-  mysql -u root <<-EOF
-  UPDATE mysql.user SET Password=PASSWORD('${PASS}') WHERE User='root';
-  DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
-  DELETE FROM mysql.user WHERE User='';
-  DELETE FROM mysql.db WHERE Db='test' OR Db='test_%';
-  
-  CREATE USER '${USER}'@'localhost' IDENTIFIED BY '${PASS}';
-  GRANT ALL PRIVILEGES ON *.* TO '${USER}'@'localhost' WITH GRANT OPTION;
-  GRANT ALL PRIVILEGES ON ${DB}.* TO '${USER}'@'localhost';
-  FLUSH PRIVILEGES;
-  EOF
-fi
-
-# If on NAT, we need to use the HOST address as the IP
-if [ -e "/etc/iocage-env" ] ; then
-        IOCAGE_PLUGIN_IP=$(cat /etc/iocage-env | grep HOST_ADDRESS= | cut -d '=' -f 2)
-        echo "Using NAT Address: $IOCAGE_PLUGIN_IP"
-fi
 
 # Fix the config file to include apps-pkg which is FreeBSD's way of keeping pkg apps
 # away from user installed
