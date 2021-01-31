@@ -133,12 +133,5 @@ iocage exec "${JAIL_NAME}" "service nginx start"
 iocage exec "${JAIL_NAME}" "service php-fpm start"
 iocage exec "${JAIL_NAME}" "service redis start"
 
-iocage exec "${JAIL_NAME}" "cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/"
-iocage exec "${JAIL_NAME}" "cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.checksum /usr/local/etc/nginx/conf.d/"
-iocage exec "${JAIL_NAME}" "cp -r /mnt/repo/nginx/nginx.conf /usr/local/etc/nginx/"
 iocage exec "${JAIL_NAME}" "cp /mnt/repo/post_install.sh /root"
 iocage exec "${JAIL_NAME}" "chmod +x /root/post_install.sh"
-iocage exec "${JAIL_NAME}" "/root/post_install.sh"
-
-iocage restart "${JAIL_NAME}"
-

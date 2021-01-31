@@ -1,30 +1,69 @@
 #!/bin/sh
-
-# Enable the service
-sysrc -f /etc/rc.conf nginx_enable="YES"
-sysrc -f /etc/rc.conf mysql_enable="YES"
-sysrc -f /etc/rc.conf php_fpm_enable="YES"
+service redis stop
+service php-fpm stop
+service nginx stop
+service mysql-server stop
 
 cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/
 cp -r /mnt/repo/nginx/conf.d/nextcloud.conf.checksum /usr/local/etc/nginx/conf.d/
+
 # Install fresh nextcloud.conf if user hasn't upgraded
-CPCONFIG=0
 if [ -e "/usr/local/etc/nginx/conf.d/nextcloud.conf" ] ; then
-  # Confirm the config doesn't have user-changes. Update if not
-  if [ "$(md5 -q /usr/local/etc/nginx/conf.d/nextcloud.conf)" = "$(cat /usr/local/etc/nginx/conf.d/nextcloud.conf.checksum)" ] ; then
-          CPCONFIG=1
+  # Confirm the nginx conf.d config file doesn't have user-changes. Update if not
+  if [ "$(md5 -q /usr/local/etc/nginx/conf.d/nextcloud.conf)" = "$(md5 /usr/local/etc/nginx/conf.d/nextcloud.conf.template)" ] ; then
+    echo "The  conf file is OK, nothing to do."
+    else
+    echo "The nginx conf.d file is NOK, we will copy it."
+    cp /usr/local/etc/nginx/conf.d/nextcloud.conf /usr/local/etc/nginx/conf.d/'date +"%Y%M%D"'_bck_nextcloud.conf
+    cp /usr/local/etc/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/nextcloud.conf
   fi
   else
-  CPCONFIG=1
+  echo "The nginx conf.d file is NOK, we will copy it."
+  mv /usr/local/etc/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/nextcloud.conf
 fi
 
-# Copy over the nginx config template
-if [ "$CPCONFIG" = "1" ] ; then
-  mv /usr/local/etc/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/nextcloud.conf
-  #md5 -q /usr/local/etc/nginx/conf.d/nextcloud.conf > /mnt/repo/nginx/conf.d/nextcloud.conf.checksum
+if [ -e "/usr/local/etc/nginx/nginx.conf" ] ; then
+  # Confirm the nginx.conf doesn't have user-changes. Update if not
+  if [ "$(md5 -q /usr/local/etc/nginx/nginx.conf)" = "$(md5 -q /mnt/repo/nginx/nginx.conf)" ] ; then
+    echo "The nginx conf file is OK, nothing to do."
+    else
+    echo "The nginx conf file is NOK, we will copy it."
+    cp /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/'date +"%Y%M%D"'_bck_nginx.conf
+    cp /mnt/repo/nginx/nginx.conf /usr/local/etc/nginx/
+  fi
+  else
+  echo "The nginx conf file is NOK, we will copy it."
+  cp /mnt/repo/nginx/nginx.conf /usr/local/etc/nginx/
 fi
-cp /mnt/repo/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/
-cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
+
+if [ -e "/usr/local/etc/php-fpm.d/nextcloud.conf" ] ; then
+  # Confirm the php-fpm config doesn't have user-changes. Update if not
+  if [ "$(md5 -q /usr/local/etc/php-fpm.d/nextcloud.conf)" = "$(md5 -q /mnt/repo/php-fpm.d/nextcloud.conf)" ] ; then
+    echo "The php-fpm conf file is OK, nothing to do."
+    else
+    echo "The php-fpm conf file is NOK, we will copy it."
+    cp /usr/local/etc/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/'date +"%Y%M%D"'_bck_nexcloud.conf
+    cp /mnt/repo/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/
+  fi
+  else
+  echo "The php-fpm conf file is NOK, we will copy it."
+  cp /usr/local/etc/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/
+fi
+
+if [ -e "/usr/local/etc/php.ini" ] ; then
+  # Confirm the php-fpm config doesn't have user-changes. Update if not
+  if [ "$(md5 -q /usr/local/etc/php.ini)" = "$(md5 -q /usr/local/etc/php.ini-production)" ] ; then
+    echo "The php-fpm conf file is OK, nothing to do."
+    else
+    echo "The php-fpm conf file is NOK, we will copy it."
+    cp /usr/local/etc/php.ini /usr/local/etc/'date +"%Y%M%D"'_bck_php.ini
+    cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
+  fi
+  else
+  echo "The php-fpm conf file is NOK, we will copy it."
+  cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
+fi
+
 # Modify opcache settings in php.ini according to Nextcloud documentation (remove comment and set recommended value)
 # https://docs.nextcloud.com/server/15/admin_manual/configuration_server/server_tuning.html#enable-php-opcache
 sed -i '' 's/.*opcache.enable=.*/opcache.enable=1/' /usr/local/etc/php.ini
@@ -42,9 +81,10 @@ sed -i '' 's/.*pm.max_children.*/pm.max_children=10/' /usr/local/etc/php-fpm.d/n
 echo "env[PATH] = $PATH" >> /usr/local/etc/php-fpm.d/nextcloud.conf
 
 # Start the service
-service nginx start 2>/dev/null
-service php-fpm start 2>/dev/null
-service mysql-server start 2>/dev/null
+service redis start
+service php-fpm start
+service nginx start
+service mysql-server start
 
 #https://docs.nextcloud.com/server/13/admin_manual/installation/installation_wizard.html do not use the same name for user and db
 set USER="nextcloud_dbadmin"
@@ -52,12 +92,12 @@ set DB="nextcloud"
 set NCUSER="ncadmin"
 
 # Save the config values
-echo "${DB}" > /root/dbname
-echo "${USER}" > /root/dbuser
-echo "${NCUSER}" > /root/ncuser
+echo "${DB}" >/root/dbname
+echo "${USER}" >/root/dbuser
+echo "${NCUSER}" >/root/ncuser
 export LC_ALL=C
-cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 > /root/dbpassword
-cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 > /root/ncpassword
+cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 >/root/dbpassword
+cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 >/root/ncpassword
 set PASS=`cat /root/dbpassword`
 set NCPASS=`cat /root/ncpassword`
 
@@ -125,22 +165,34 @@ sed -i '' "s|false|true|g" /usr/local/www/nextcloud/config/config.php
 mkdir -p /usr/local/www/nextcloud-sessions-tmp >/dev/null 2>/dev/null
 chmod o-rwx /usr/local/www/nextcloud-sessions-tmp
 chown -R www:www /usr/local/www/nextcloud-sessions-tmp
-chown -R www:www /usr/local/www/nextcloud/apps-pkg
-
-chmod -R o-rwx /usr/local/www/nextcloud
+#chown -R www:www /usr/local/www/nextcloud/apps-pkg
+#chmod -R o-rwx /usr/local/www/nextcloud
 
 #updater needs this
 chown -R www:www /usr/local/www/nextcloud
 
+#update permission in nextcloud folder
+find /usr/local/www/nextcloud -type d -print0 | xargs -0 chmod 770
+find /usr/local/www/nextcloud -type f -print0 | xargs -0 chmod 660
+
+#restart all the services
+
+#restart mysql
+service mysql-server restart
+
 #restart the services to make sure we have pick up the new permission
-service php-fpm restart 2>/dev/null
+service php-fpm restart
+
+#restart redis
+service redis restart
+
 #nginx restarts to fast while php is not fully started yet
 sleep 5
-service nginx restart 2>/dev/null
+service nginx restart
 
-echo "Database Name: $DB" > /root/PLUGIN_INFO
-echo "Database User: $USER" >> /root/PLUGIN_INFO
-echo "Database Password: $PASS" >> /root/PLUGIN_INFO
+echo "Database Name: $DB" >/root/PLUGIN_INFO
+echo "Database User: $USER" >>/root/PLUGIN_INFO
+echo "Database Password: $PASS" >>/root/PLUGIN_INFO
 
-echo "Nextcloud Admin User: $NCUSER" >> /root/PLUGIN_INFO
-echo "Nextcloud Admin Password: $NCPASS" >> /root/PLUGIN_INFO
+echo "Nextcloud Admin User: $NCUSER" >>/root/PLUGIN_INFO
+echo "Nextcloud Admin Password: $NCPASS" >>/root/PLUGIN_INFO
