@@ -28,9 +28,9 @@ echo -e "\nJail ${JAIL_NAME} in creation\n##############################\n"
 iocage create -n "${JAIL_NAME}" -r "${RELEASE}"-RELEASE \
   ip4_addr="vnet0|${IP_ADDR}/${MASK_ADDR}" \
   defaultrouter="${DEFAULT_ROUTER}" \
-  vnet="1" \
+  vnet="on" \
   allow_raw_sockets="1" \
-  boot="1" \
+  boot="on" \
   nat="1" \
   nat_forwards="tcp(${PORT_GUEST}:${PORT_HOST})" \
   mac_prefix="428d5c" \

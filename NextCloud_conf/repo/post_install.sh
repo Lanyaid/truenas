@@ -14,7 +14,7 @@ if [ -e "/usr/local/etc/nginx/conf.d/nextcloud.conf" ] ; then
     echo "The  conf file is OK, nothing to do."
     else
     echo "The nginx conf.d file is NOK, we will copy it."
-    cp /usr/local/etc/nginx/conf.d/nextcloud.conf /usr/local/etc/nginx/conf.d/'date +"%Y%M%D"'_bck_nextcloud.conf
+    cp /usr/local/etc/nginx/conf.d/nextcloud.conf /usr/local/etc/nginx/conf.d/`date +"%Y%M%D"`_nextcloud.conf.bck
     cp /usr/local/etc/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/nextcloud.conf
   fi
   else
@@ -28,7 +28,7 @@ if [ -e "/usr/local/etc/nginx/nginx.conf" ] ; then
     echo "The nginx conf file is OK, nothing to do."
     else
     echo "The nginx conf file is NOK, we will copy it."
-    cp /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/'date +"%Y%M%D"'_bck_nginx.conf
+    cp /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/`date +"%Y%M%D"`_nginx.conf.bck
     cp /mnt/repo/nginx/nginx.conf /usr/local/etc/nginx/
   fi
   else
@@ -42,7 +42,7 @@ if [ -e "/usr/local/etc/php-fpm.d/nextcloud.conf" ] ; then
     echo "The php-fpm conf file is OK, nothing to do."
     else
     echo "The php-fpm conf file is NOK, we will copy it."
-    cp /usr/local/etc/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/'date +"%Y%M%D"'_bck_nexcloud.conf
+    cp /usr/local/etc/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/`date +"%Y%M%D"`_nexcloud.conf.bck
     cp /mnt/repo/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/
   fi
   else
@@ -90,14 +90,27 @@ service mysql-server start
 set USER="nextcloud_dbadmin"
 set DB="nextcloud"
 set NCUSER="ncadmin"
+echo "${DB}"
+echo "${USER}"
+echo "${NCUSER}"
 
 # Save the config values
-echo "${DB}" >/root/dbname
-echo "${USER}" >/root/dbuser
-echo "${NCUSER}" >/root/ncuser
+if [ ! -e /root/dbname ]; then
+  echo "${DB}" >/root/dbname
+fi
+if [ ! -e /root/dbuser ]; then
+  echo "${USER}" >/root/dbuser
+fi
+if [ ! -e /root/ncuser ]; then
+  echo "${NCUSER}" >/root/ncuser
+fi
 export LC_ALL=C
-cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 >/root/dbpassword
-cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 >/root/ncpassword
+if [ ! -e /root/dbpassword ]; then
+  cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1 >/root/dbpassword
+fi
+if [ ! -e /root/ncpassword ]; then
+  cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1 >/root/ncpassword
+fi
 set PASS=`cat /root/dbpassword`
 set NCPASS=`cat /root/ncpassword`
 
