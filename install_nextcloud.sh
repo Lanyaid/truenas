@@ -9,7 +9,8 @@ PORT_GUEST="80"
 PORT_HOST="8415"
 DHCP="0"
 PHP_PACKAGES="php74 php74-bz2 php74-ctype php74-curl php74-dom php74-exif php74-fileinfo php74-filter php74-gd php74-iconv php74-intl php74-json php74-ldap php74-mbstring php74-opcache php74-openssl php74-pdo php74-pdo_mysql php74-pecl-APCu php74-pecl-imagick php74-pecl-redis php74-posix php74-session php74-simplexml php74-xml php74-xmlreader php74-xmlwriter php74-xsl php74-zip php74-zlib php74-bcmath php74-gmp"
-PACKAGES="nano wget ca_root_nss nginx mariadb104-server redis tree sudo git ${PHP_PACKAGES}"
+#PACKAGES="nano wget ca_root_nss nginx mariadb104-server redis tree sudo git nextcloud-php74 ${PHP_PACKAGES}"
+PACKAGES="nano wget ca_root_nss nginx mariadb104-server redis tree sudo git nextcloud-php74"
 SYSRC="nginx mysql php_fpm redis"
 SERVICES=$( echo -e "nginx\nmysql-server\nphp-fpm\nredis" )
  

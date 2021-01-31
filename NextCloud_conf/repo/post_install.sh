@@ -47,7 +47,7 @@ service php-fpm start 2>/dev/null
 service mysql-server start 2>/dev/null
 
 #https://docs.nextcloud.com/server/13/admin_manual/installation/installation_wizard.html do not use the same name for user and db
-set USER="dbadmin"
+set USER="nextcloud_dbadmin"
 set DB="nextcloud"
 set NCUSER="ncadmin"
 
@@ -90,8 +90,8 @@ EOF
  DELETE FROM mysql.db WHERE Db='test' OR Db='test_%';
  
  CREATE USER '${USER}'@'localhost' IDENTIFIED BY '${PASS}';
- GRANT ALL PRIVILEGES ON *.* TO '${USER}'@'localhost' WITH GRANT OPTION;
- GRANT ALL PRIVILEGES ON ${DB}.* TO '${USER}'@'localhost';
+ #GRANT ALL PRIVILEGES ON *.* TO '${USER}'@'localhost' WITH GRANT OPTION;
+ GRANT ALL PRIVILEGES ON ${DB}.* TO '${USER}'@'localhost' WITH GRANT OPTION;
  FLUSH PRIVILEGES;
 EOF
 fi
@@ -104,8 +104,8 @@ fi
 
 # Fix the config file to include apps-pkg which is FreeBSD's way of keeping pkg apps
 # away from user installed
-cp /mnt/repo/nextcloud/config/config.php /usr/local/www/nextcloud/config/config.php
-chown www:www /usr/local/www/nextcloud/config/config.php
+#cp /mnt/repo/nextcloud/config/config.php /usr/local/www/nextcloud/config/config.php
+#chown www:www /usr/local/www/nextcloud/config/config.php
 
 #Use occ to complete Nextcloud installation
 su -m www -c "php /usr/local/www/nextcloud/occ maintenance:install --database=\"mysql\" --database-name=\"nextcloud\" --database-user=\"$USER\" --database-pass=\"$PASS\" --database-host=\"localhost\" --admin-user=\"$NCUSER\" --admin-pass=\"$NCPASS\" --data-dir=\"/usr/local/www/nextcloud/data\""
