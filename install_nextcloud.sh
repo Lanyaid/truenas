@@ -114,8 +114,8 @@ iocage exec "${JAIL_NAME}" "pkg update"
 iocage exec "${JAIL_NAME}" "pkg upgrade"
 iocage exec "${JAIL_NAME}" "pkg install -y wget ${PACKAGES}"
 
-iocage exec "${JAIL_NAME}" "cd /tmp && wget https://download.nextcloud.com/server/releases/latest.tar.bz2"
-iocage exec "${JAIL_NAME}" "tar -xf /tmp/latest.tar.bz2 -C /usr/local/www"
+#iocage exec "${JAIL_NAME}" "cd /tmp && wget https://download.nextcloud.com/server/releases/latest.tar.bz2"
+#iocage exec "${JAIL_NAME}" "tar -xf /tmp/latest.tar.bz2 -C /usr/local/www"
 
 #chown & chmod
 iocage exec "${JAIL_NAME}" "chown -R ${USER}:${GROUP} /usr/local/www"
@@ -126,7 +126,6 @@ iocage exec "${JAIL_NAME}" "sysrc nginx_enable=yes"
 iocage exec "${JAIL_NAME}" "sysrc mysql_enable=yes"
 iocage exec "${JAIL_NAME}" "sysrc php_fpm_enable=yes"
 iocage exec "${JAIL_NAME}" "sysrc redis_enable=yes"
-
 
 iocage exec "${JAIL_NAME}" "service mysql-server start"
 iocage exec "${JAIL_NAME}" "service nginx start"
