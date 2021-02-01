@@ -14,7 +14,7 @@ if [ -e "/usr/local/etc/nginx/conf.d/nextcloud.conf" ] ; then
     echo "The  conf file is OK, nothing to do."
     else
     echo "The nginx conf.d file is NOK, we will copy it."
-    cp /usr/local/etc/nginx/conf.d/nextcloud.conf /usr/local/etc/nginx/conf.d/`date +"%Y%M%D"`_nextcloud.conf.bck
+    cp /usr/local/etc/nginx/conf.d/nextcloud.conf /usr/local/etc/nginx/conf.d/`date +"%Y%M%d"`_nextcloud.conf.bck
     cp /usr/local/etc/nginx/conf.d/nextcloud.conf.template /usr/local/etc/nginx/conf.d/nextcloud.conf
   fi
   else
@@ -28,7 +28,7 @@ if [ -e "/usr/local/etc/nginx/nginx.conf" ] ; then
     echo "The nginx conf file is OK, nothing to do."
     else
     echo "The nginx conf file is NOK, we will copy it."
-    cp /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/`date +"%Y%M%D"`_nginx.conf.bck
+    cp /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/`date +"%Y%M%d"`_nginx.conf.bck
     cp /mnt/repo/nginx/nginx.conf /usr/local/etc/nginx/
   fi
   else
@@ -42,7 +42,7 @@ if [ -e "/usr/local/etc/php-fpm.d/nextcloud.conf" ] ; then
     echo "The php-fpm conf file is OK, nothing to do."
     else
     echo "The php-fpm conf file is NOK, we will copy it."
-    cp /usr/local/etc/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/`date +"%Y%M%D"`_nexcloud.conf.bck
+    cp /usr/local/etc/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/`date +"%Y%M%d"`_nexcloud.conf.bck
     cp /mnt/repo/php-fpm.d/nextcloud.conf /usr/local/etc/php-fpm.d/
   fi
   else

@@ -3,8 +3,8 @@
 JAIL_NAME="nextcloud"
 RELEASE="11.4"
 IP_ADDR="172.16.0.6"
-MASK_ADDR="27"
-DEFAULT_ROUTER="172.16.0.1"
+MASK_ADDR="30"
+DEFAULT_ROUTER="172.16.0.5"
 PORT_GUEST="80"
 PORT_HOST="8415"
 DHCP="0"
@@ -25,27 +25,37 @@ GID2="88"
 
 echo -e "\nJail ${JAIL_NAME} in creation\n##############################\n"
 
-iocage create -n "${JAIL_NAME}" -r "${RELEASE}"-RELEASE \
-  ip4_addr="vnet0|${IP_ADDR}/${MASK_ADDR}" \
-  defaultrouter="${DEFAULT_ROUTER}" \
-  vnet="on" \
-  allow_raw_sockets="1" \
-  boot="on" \
-  nat="1" \
-  nat_forwards="tcp(${PORT_GUEST}:${PORT_HOST})" \
-  mac_prefix="428d5c" \
-  vnet0_mac="428d5c6cb0ba 428d5c6cb0bb" \
-  host_hostname="${JAIL_NAME}" \
-  host_hostuuid="${JAIL_NAME}" \
-  allow_mount_devfs="1" \
-  allow_raw_sockets="1" \
-  jail_zfs_dataset="iocage/jails/${JAIL_NAME}/data"
+#iocage create -n "${JAIL_NAME}" -r "${RELEASE}"-RELEASE \
+#  ip4_addr="vnet0|${IP_ADDR}/${MASK_ADDR}" \
+#  defaultrouter="${DEFAULT_ROUTER}" \
+#  vnet="on" \
+#  allow_raw_sockets="1" \
+#  boot="on" \
+#  nat="1" \
+#  nat_forwards="tcp(${PORT_GUEST}:${PORT_HOST})" \
+#  mac_prefix="428d5c" \
+#  vnet0_mac="428d5c6cb0ba 428d5c6cb0bb" \
+#  host_hostname="${JAIL_NAME}" \
+#  host_hostuuid="${JAIL_NAME}" \
+#  allow_mount_devfs="1" \
+#  allow_raw_sockets="1" \
+#  jail_zfs_dataset="iocage/jails/${JAIL_NAME}/data"
 
-
-echo -e "\nRestarting jail ${JAIL_NAME}\n################################\n"
-
+#echo -e "\nRestarting jail ${JAIL_NAME}\n################################\n"
 #restarting jail
-iocage restart "${JAIL_NAME}"
+#iocage restart "${JAIL_NAME}"
+
+#stop services 
+iocage exec "${JAIL_NAME}" "service mysql-server stop"
+iocage exec "${JAIL_NAME}" "service nginx stop"
+iocage exec "${JAIL_NAME}" "service php-fpm stop"
+iocage exec "${JAIL_NAME}" "service redis stop"
+
+#rename inside folders in orderto create folders for mounts
+iocage exec "${JAIL_NAME}" "
+iocage exec "${JAIL_NAME}" "
+iocage exec "${JAIL_NAME}" "
+iocage exec "${JAIL_NAME}" "
 
 echo -e "\nFolder and user creation, permission and mounting\n"
 #iocage folder creation and mounting
