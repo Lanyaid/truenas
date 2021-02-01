@@ -22,11 +22,13 @@ iocage exec "${JAIL_NAME}" "pkg update"
 iocage exec "${JAIL_NAME}" "pkg upgrade"
 
 #stop services 
-iocage exec "${JAIL_NAME}" "service mysql-server stop"
+echo -e "\nServices stop\n"
 iocage exec "${JAIL_NAME}" "service nginx stop"
 iocage exec "${JAIL_NAME}" "service php-fpm stop"
+iocage exec "${JAIL_NAME}" "service mysql-server stop"
 #iocage exec "${JAIL_NAME}" "service redis stop"
 
+echo -e "\nApp folders rename in order to mount correctly.\n"
 #rename inside folders in orderto create folders for mounts
 iocage exec "${JAIL_NAME}" "mv /root /root_tmp"
 iocage exec "${JAIL_NAME}" "mv /usr/local/www/nextcloud/apps /usr/local/www/nextcloud/apps_tmp"
@@ -60,7 +62,7 @@ mkdir -p "${FS_NEXTCLOUD_CONF}"/mysql
 
 
 #mkdir inside the jail
-
+echo -e "\nFolder creation inside the jail\n"
 iocage exec "${JAIL_NAME}" mkdir -p /root
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/apps
@@ -77,6 +79,7 @@ iocage exec "${JAIL_NAME}" mkdir -p /mnt/repo
 
 #zfs set primarycache=metadata system_cache/NextCloud_data
 
+echo -e "\nMounting app folders.\n"
 #mounting fs
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/home_root" "/root" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nextcloud/apps" "/usr/local/www/nextcloud/apps" nullfs rw 0 0
@@ -90,39 +93,40 @@ iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/mysql" "/usr/lo
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_mysql" "/var/db/mysql" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/repo" "/mnt/repo" nullfs rw 0 0
 
+echo -e "\nCopy jail files if the mounted directory is empty. If not, old data will be used.\n"
 if [ $(iocage exec "${JAIL_NAME}" "ls /root | wc -l") = "0" ]; then
   iocagec exec "${JAIL_NAME}" "cp -r /root_tmp /mnt/repo/home_root"
   iocagec exec "${JAIL_NAME}" "cp -r /root_tmp /root"
   iocagec exec "${JAIL_NAME}" "rm -r /root_tmp"
   echo "Copy of /mnt/repo/home_root OK"
 fi
-if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/apps | wc -l") == "0" ]; then
+if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/apps | wc -l") = "0" ]; then
   iocagec exec "${JAIL_NAME}" "cp -r /usr/local/www/nextcloud/apps_tmp /usr/local/www/nextcloud/apps"
   iocagec exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/apps_tmp"
 fi
-if ( $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/apps-pkg | wc -l") == "0" ); then
+if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/apps-pkg | wc -l") = "0" ]; then
   iocagec exec "${JAIL_NAME}" "cp -p /usr/local/www/nextcloud/apps-pkg_tmp /usr/local/www/nextcloud/apps-pkg"
   iocagec exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/apps-pkg_tmp"
 fi
-if ( $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/themes | wc -l") = "0" ); then
+if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/themes | wc -l") = "0" ]; then
   iocagec exec "${JAIL_NAME}" "cp -r /usr/local/www/nextcloud/themes_tmp /usr/local/www/nextcloud/themes"
   iocagec exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/themes_tmp"
 fi
-if ( $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/nginx | wc -l") = "0" ); then
+if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/nginx | wc -l") = "0" ]; then
   iocagec exec "${JAIL_NAME}" "cp -r /usr/local/etc/nginx_tmp/nginx.conf /mnt/repo/nginx"
   iocagec exec "${JAIL_NAME}" "cp -r /usr/local/etc/nginx_tmp/nginx/conf.d/* /mnt/repo/nginx/conf.d"
   iocagec exec "${JAIL_NAME}" "cp -r /usr/local/etc/nginx_tmp /usr/local/etc/nginx"
   iocagec exec "${JAIL_NAME}" "rm -r /usr/local/etc/nginx_tmp"
 fi
-if ( $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/php-fpm.d" | wc -l) = "0" ); then
+if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/php-fpm.d" | wc -l) = "0" ]; then
   iocagec exec "${JAIL_NAME}" "cp -r /usr/local/etc/php-fpm.d_tmp/* /usr/local/etc/php-fpm.d"
   iocagec exec "${JAIL_NAME}" "rm -r /usr/local/etc/php-fpm.d_tmp"
 fi
-if ( $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/mysql | wc -l") = "0" ); then
+if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/mysql | wc -l") = "0" ]; then
   iocagec exec "${JAIL_NAME}" "cp -r /usr/local/etc/mysql_tmp /usr/local/etc/mysql"
   iocagec exec "${JAIL_NAME}" "rm -r /usr/local/etc/mysql_tmp"
 fi
-if ( $(iocage exec "${JAIL_NAME}" "ls /var/db/mysql" | wc -l) = "0" ); then
+if [ $(iocage exec "${JAIL_NAME}" "ls /var/db/mysql" | wc -l) = "0" ]; then
   iocagec exec "${JAIL_NAME}" "cp -r /var/db/mysql_tmp /var/db/mysql"
   iocagec exec "${JAIL_NAME}" "rm -r /var/db/mysql_tmp"
 fi
