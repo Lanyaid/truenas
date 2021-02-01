@@ -134,12 +134,13 @@ fi
 #chown & chmod
 iocage exec "${JAIL_NAME}" "chown -R ${USER}:${GROUP} /usr/local/www"
 iocage exec "${JAIL_NAME}" "chmod 770 /usr/local/www"
-iocage exec "${JAIL_NAME}" "chmod 770 /usr/local/www/nextcloud"
 iocage exec "${JAIL_NAME}" "find /usr/local/www/nextcloud -type d -print0 | xargs -0 chmod 770"
 iocage exec "${JAIL_NAME}" "find /usr/local/www/nextcloud -type f -print0 | xargs -0 chmod 660"
 
 iocage exec "${JAIL_NAME}" "chown -R ${USER2}:${GROUP2} /var/db/mysql"
 iocage exec "${JAIL_NAME}" "chmod 770 /var/db/mysql"
+iocage exec "${JAIL_NAME}" "find /var/db/mysql -type d -print0 | xargs -0 chmod 770"
+iocage exec "${JAIL_NAME}" "find /var/db/mysql -type f -print0 | xargs -0 chmod 660"
 
 #starting the services
 iocage exec "${JAIL_NAME}" "service mysql-server start"
