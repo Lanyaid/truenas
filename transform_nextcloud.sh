@@ -138,10 +138,11 @@ iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/mysql" "/usr/lo
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_mysql" "/var/db/mysql" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/repo" "/mnt/repo" nullfs rw 0 0
 
-if ( $(iocage exec "${JAIL_NAME}" "/root") =="0" ); then
+if [ "$(iocage exec "${JAIL_NAME}" "/root")" = "0" ]; then
   iocagec exec "${JAIL_NAME}" "cp -r /root_tmp /mnt/repo/home_root"
   iocagec exec "${JAIL_NAME}" "cp -r /root_tmp /root"
   iocagec exec "${JAIL_NAME}" "rm -r /root_tmp"
+  echo "Copy of /mnt/repo/home_root OK"
 fi
 if ( $(iocage exec "${JAIL_NAME}" "/usr/local/www/nextcloud/apps") =="0" ); then
   iocagec exec "${JAIL_NAME}" "cp -r /usr/local/www/nextcloud/apps_tmp /usr/local/www/nextcloud/apps"
