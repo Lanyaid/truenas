@@ -1,5 +1,6 @@
 #/bin/csh
 FS_BASE=/mnt/system_cache
+FS_JAILS_BASE=${FS_BASE}/iocage/jails
 FS_NEXTCLOUD_CONF="${FS_BASE}"/NextCloud_conf
 FS_NEXTCLOUD_DATA="${FS_BASE}"/NextCloud_data
 FS_MYSQL_DATA="${FS_BASE}"/NextCloud_mysql
@@ -74,18 +75,18 @@ mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nginx
 #mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/mysql
 
 #rename from outside of folders in order to mount them inside after
-mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/root" "${FS_NEXTCLOUD_CONF}/root"
-mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/www/nextcloud/apps" "${FS_NEXTCLOUD_CONF}/nextcloud/"
-mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/www/nextcloud/apps-pkg" "${FS_NEXTCLOUD_CONF}/nextcloud/"
-mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/www/nextcloud/config" "${FS_NEXTCLOUD_CONF}/nextcloud/"
-mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/www/nextcloud/themes" "${FS_NEXTCLOUD_CONF}/nextcloud/"
-mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/www/nextcloud/data/*" "${FS_NEXTCLOUD_DATA}"
-cp "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/etc/nginx/nginx.conf" "${FS_NEXTCLOUD_CONF}/repo/nginx/"
-cp -pr "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/etc/nginx/conf.d/" "${FS_NEXTCLOUD_CONF}/repo/nginx/"
-cp -pr "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/etc/php-fpm.d/" "${FS_NEXTCLOUD_CONF}/repo/"
+mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/root" "${FS_NEXTCLOUD_CONF}"
+mv "${FS_JAILS_BASE}/${JAIL_NAME}/usr/local/www/nextcloud/apps" "${FS_NEXTCLOUD_CONF}/nextcloud/"
+mv "${FS_JAILS_BASE}/${JAIL_NAME}/usr/local/www/nextcloud/apps-pkg" "${FS_NEXTCLOUD_CONF}/nextcloud/"
+mv "${FS_JAILS_BASE}/${JAIL_NAME}/usr/local/www/nextcloud/config" "${FS_NEXTCLOUD_CONF}/nextcloud/"
+mv "${FS_JAILS_BASE}/${JAIL_NAME}/usr/local/www/nextcloud/themes" "${FS_NEXTCLOUD_CONF}/nextcloud/"
+mv "${FS_JAILS_BASE}/${JAIL_NAME}/usr/local/www/nextcloud/data" "${FS_NEXTCLOUD_DATA}"
+cp "${FS_JAILS_BASE}/${JAIL_NAME}/usr/local/etc/nginx/nginx.conf" "${FS_NEXTCLOUD_CONF}/repo/nginx/"
+cp -pr "${FS_JAILS_BASE}/${JAIL_NAME}/usr/local/etc/nginx/conf.d/" "${FS_NEXTCLOUD_CONF}/repo/nginx/"
+cp -pr "${FS_JAILS_BASE}/${JAIL_NAME}/usr/local/etc/php-fpm.d/" "${FS_NEXTCLOUD_CONF}/repo/"
 #mv "${FS_BASE}"/iocage/jail/"${JAIL_NAME}"/usr/local/etc/redis ${FS_NEXTCLOUD_CONF}/usr/local/etc/redis_tmp"
-cp -pr "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/etc/mysql/" "${FS_NEXTCLOUD_CONF}/repo/"
-mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/var/db/mysql/*" "${FS_NEXTCLOUD_CONF}/"
+cp -pr "${FS_JAILS_BASE}/${JAIL_NAME}/usr/local/etc/mysql/" "${FS_NEXTCLOUD_CONF}/repo/"
+mv "${FS_JAILS_BASE}/${JAIL_NAME}/var/db/mysql" "${FS_NEXTCLOUD_CONF}/"
 
 
 #mkdir inside the jail
@@ -108,16 +109,16 @@ iocage exec "${JAIL_NAME}" mkdir -p /mnt/repo
 
 echo -e "\nMounting app folders.\n"
 #mounting fs
-iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/home_root" "/root" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/root" "/root" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/nextcloud/apps" "/usr/local/www/nextcloud/apps" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/nextcloud/apps-pkg" "/usr/local/www/nextcloud/apps-pkg" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/nextcloud/config" "/usr/local/www/nextcloud/config" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/nextcloud/themes" "/usr/local/www/nextcloud/themes" nullfs rw 0 0
-iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_DATA}" "/usr/local/www/nextcloud/data" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_DATA}/data" "/usr/local/www/nextcloud/data" nullfs rw 0 0
 #iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/nginx" "/usr/local/etc/nginx" nullfs rw 0 0
 #iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/php-fpm.d" "/usr/local/etc/php-fpm.d" nullfs rw 0 0
 #iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/mysql" "/usr/local/etc/mysql" nullfs rw 0 0
-iocage fstab -a "${JAIL_NAME}" "${FS_MYSQL_DATA}/" "/var/db/mysql" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "${FS_MYSQL_DATA}/mysql" "/var/db/mysql" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/repo" "/mnt/repo" nullfs rw 0 0
 
 #echo -e "\nCopy jail files if the mounted directory is empty. If not, old data will be used.\n"
