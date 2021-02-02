@@ -86,7 +86,7 @@ cp -pr "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/etc/nginx/conf.d/" "${FS_NE
 cp -pr "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/etc/php-fpm.d/" "${FS_NEXTCLOUD_CONF}/repo/"
 #mv "${FS_BASE}"/iocage/jail/"${JAIL_NAME}"/usr/local/etc/redis ${FS_NEXTCLOUD_CONF}/usr/local/etc/redis_tmp"
 cp -pr "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/etc/mysql/" "${FS_NEXTCLOUD_CONF}/repo/"
-mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/var/db/mysql" "${FS_NEXTCLOUD_MYSQL}/"
+mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/var/db/mysql" "${FS_MYSQL_DATA}/"
 
 
 #mkdir inside the jail
