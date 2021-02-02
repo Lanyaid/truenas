@@ -79,6 +79,7 @@ echo -e "\nApp folders rename in order to mount correctly.\n"
 
 if [ -e "${FS_NEXTCLOUD_CONF}/root" ]; then
   echo "${FS_NEXTCLOUD_CONF}/root exist, we try to use it to mount."
+  mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/root" "${FS_JAILS_BASE}/${JAIL_NAME}/root/root_old"
   else
   echo "${FS_NEXTCLOUD_CONF}/root does not exist, we try to copy it from ${FS_JAILS_BASE}/${JAIL_NAME}/root/root."
   mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/root" "${FS_NEXTCLOUD_CONF}"
@@ -86,6 +87,7 @@ fi
 
 if [ -e "${FS_NEXTCLOUD_CONF}/nextcloud/apps" ]; then
     echo "${FS_NEXTCLOUD_CONF}/nextcloud/apps exist, we try to use it to mount."
+    mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/apps" "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/apps_old"
     else
     echo "${FS_NEXTCLOUD_CONF}/nextcloud/apps does not exist, we try to copy it from ${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/apps."
     mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/apps" "${FS_NEXTCLOUD_CONF}/nextcloud/"
@@ -93,6 +95,7 @@ fi
 
 if [ -e "${FS_NEXTCLOUD_CONF}/nextcloud/apps-pkg" ]; then
   echo "${FS_NEXTCLOUD_CONF}/nextcloud/apps-pkg exist, we try to use it to mount."
+  mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/apps-pkg" "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/apps-pkg_old"
   else
   echo "${FS_NEXTCLOUD_CONF}/nextcloud/apps-pkg does not exist, we try to copy it from ${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/apps-pkg."
   mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/apps-pkg" "${FS_NEXTCLOUD_CONF}/nextcloud/"
@@ -100,6 +103,7 @@ fi
 
 if [ -e "${FS_NEXTCLOUD_CONF}/nextcloud/config" ]; then
   echo "${FS_NEXTCLOUD_CONF}/nextcloud/config exist, we try to use it to mount."
+  mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/config" "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/config_old"
   else
   echo "${FS_NEXTCLOUD_CONF}/nextcloud/config does not exist, we try to copy it from ${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/config."
   mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/config" "${FS_NEXTCLOUD_CONF}/nextcloud/"
@@ -107,6 +111,7 @@ fi
 
 if [ -e "${FS_NEXTCLOUD_CONF}/nextcloud/themes" ]; then
   echo "${FS_NEXTCLOUD_CONF}/nextcloud/themes is not empty, we try to use it to mount."
+  mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/themes" "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/themes_old"
   else
   echo "${FS_NEXTCLOUD_CONF}/nextcloud/themes is empty, we try to move ${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/themes into it."
   mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/themes" "${FS_NEXTCLOUD_CONF}/nextcloud/"
@@ -114,6 +119,7 @@ fi
 
 if [ $(ls "${FS_NEXTCLOUD_DATA}" | wc -l) -gt "0" ]; then
   echo "${FS_NEXTCLOUD_DATA} is not empty, we try to use it to mount."
+  mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/data" "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/data_old"
   else
   echo "${FS_NEXTCLOUD_DATA} is empty, we try to move it from ${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/data."
   mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/www/nextcloud/data" "${FS_NEXTCLOUD_DATA}"
@@ -121,6 +127,7 @@ fi
 
 if [ -e "${FS_MYSQL_DATA}/mysql" ]; then
   echo "${FS_MYSQL_DATA} exist, we try to use it to mount."
+  mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/var/db/mysql" "${FS_JAILS_BASE}/${JAIL_NAME}/root/var/db/mysql_old"
   else
   echo "${FS_MYSQL_DATA} does not exist, we try to copy it from ${FS_JAILS_BASE}/${JAIL_NAME}/root/var/db/mysql."
   mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/var/db/mysql" "${FS_MYSQL_DATA}"
