@@ -85,8 +85,8 @@ cp "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/etc/nginx/nginx.conf" "${FS_NEX
 cp -pr "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/etc/nginx/conf.d/" "${FS_NEXTCLOUD_CONF}/repo/nginx/"
 cp -pr "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/etc/php-fpm.d/" "${FS_NEXTCLOUD_CONF}/repo/"
 #mv "${FS_BASE}"/iocage/jail/"${JAIL_NAME}"/usr/local/etc/redis ${FS_NEXTCLOUD_CONF}/usr/local/etc/redis_tmp"
-cp -pr "${FS_JAILS_BASE}/${JAIL_NAME}/usr/local/etc/mysql/" "${FS_NEXTCLOUD_CONF}/repo/"
-mv "${FS_JAILS_BASE}/${JAIL_NAME}/var/db/mysql" "${FS_NEXTCLOUD_CONF}/"
+cp -pr "${FS_JAILS_BASE}/${JAIL_NAME}/root/usr/local/etc/mysql/" "${FS_NEXTCLOUD_CONF}/repo/"
+mv "${FS_JAILS_BASE}/${JAIL_NAME}/root/var/db/mysql" "${FS_NEXTCLOUD_MYSQL}/"
 
 
 #mkdir inside the jail
@@ -97,12 +97,12 @@ iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/apps
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/apps-pkg
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/config
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/themes
-#iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/data
+iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/data
 #iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/nginx
 #iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/nginx/conf.d
 #iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/php-fpm.d
 #iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/mysql
-#iocage exec "${JAIL_NAME}" mkdir -p /var/db/mysql
+iocage exec "${JAIL_NAME}" mkdir -p /var/db/mysql
 iocage exec "${JAIL_NAME}" mkdir -p /mnt/repo
 
 #zfs set primarycache=metadata system_cache/NextCloud_data
