@@ -1,7 +1,8 @@
 #/bin/csh
-FS_NEXTCLOUD_CONF=/mnt/system_cache/NextCloud_conf
-FS_NEXTCLOUD_DATA=/mnt/system_cache/NextCloud_data
-FS_MYSQL_DATA=/mnt/system_cache/NextCloud_mysql
+FS_BASE=/mnt/system_cache
+FS_NEXTCLOUD_CONF="${FS_BASE}"/NextCloud_conf
+FS_NEXTCLOUD_DATA="${FS_BASE}"/NextCloud_data
+FS_MYSQL_DATA="${FS_BASE}"/NextCloud_mysql
 
 #iocage jail variables
 JAIL_NAME="nextcloud"
@@ -29,48 +30,63 @@ iocage exec "${JAIL_NAME}" "service mysql-server stop"
 #iocage exec "${JAIL_NAME}" "service redis stop"
 
 echo -e "\nApp folders rename in order to mount correctly.\n"
-#rename inside folders in orderto create folders for mounts
-iocage exec "${JAIL_NAME}" "mv /root /root_tmp"
-iocage exec "${JAIL_NAME}" "mv /usr/local/www/nextcloud/apps /usr/local/www/nextcloud/apps_tmp"
-iocage exec "${JAIL_NAME}" "mv /usr/local/www/nextcloud/apps-pkg /usr/local/www/nextcloud/apps-pkg_tmp"
-iocage exec "${JAIL_NAME}" "mv /usr/local/www/nextcloud/config /usr/local/www/nextcloud/config_tmp"
-iocage exec "${JAIL_NAME}" "mv /usr/local/www/nextcloud/themes /usr/local/www/nextcloud/themes_tmp"
-iocage exec "${JAIL_NAME}" "mv /usr/local/www/nextcloud/data /usr/local/www/nextcloud/data_tmp"
-iocage exec "${JAIL_NAME}" "mv /usr/local/etc/nginx /usr/local/etc/nginx_tmp"
-iocage exec "${JAIL_NAME}" "mv /usr/local/etc/php-fpm.d /usr/local/etc/php-fpm.d_tmp"
-#iocage exec "${JAIL_NAME}" "mv /usr/local/etc/redis /usr/local/etc/redis_tmp"
-iocage exec "${JAIL_NAME}" "mv /usr/local/etc/mysql /usr/local/etc/mysql_tmp"
-iocage exec "${JAIL_NAME}" "mv /var/db/mysql /var/db/mysql_tmp"
+##rename inside folders in orderto create folders for mounts
+#iocage exec "${JAIL_NAME}" "mv /root /root_tmp"
+#iocage exec "${JAIL_NAME}" "mv /usr/local/www/nextcloud/apps /usr/local/www/nextcloud/apps_tmp"
+#iocage exec "${JAIL_NAME}" "mv /usr/local/www/nextcloud/apps-pkg /usr/local/www/nextcloud/apps-pkg_tmp"
+#iocage exec "${JAIL_NAME}" "mv /usr/local/www/nextcloud/config /usr/local/www/nextcloud/config_tmp"
+#iocage exec "${JAIL_NAME}" "mv /usr/local/www/nextcloud/themes /usr/local/www/nextcloud/themes_tmp"
+#iocage exec "${JAIL_NAME}" "mv /usr/local/www/nextcloud/data /usr/local/www/nextcloud/data_tmp"
+#iocage exec "${JAIL_NAME}" "mv /usr/local/etc/nginx /usr/local/etc/nginx_tmp"
+#iocage exec "${JAIL_NAME}" "mv /usr/local/etc/php-fpm.d /usr/local/etc/php-fpm.d_tmp"
+##iocage exec "${JAIL_NAME}" "mv /usr/local/etc/redis /usr/local/etc/redis_tmp"
+#iocage exec "${JAIL_NAME}" "mv /usr/local/etc/mysql /usr/local/etc/mysql_tmp"
+#iocage exec "${JAIL_NAME}" "mv /var/db/mysql /var/db/mysql_tmp"
 
-
-echo -e "\nFolder and user creation, permission and mounting\n"
+echo -e "\nFolder and user creation, permission, copy, move and mounting\n"
 #iocage folder creation and mounting
 #mkdir outside the jail
 
-mkdir -p "${FS_NEXTCLOUD_CONF}"/home_root
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/home_root
 mkdir -p "${FS_NEXTCLOUD_CONF}"/nextcloud
-mkdir -p "${FS_NEXTCLOUD_CONF}"/nextcloud/apps
-mkdir -p "${FS_NEXTCLOUD_CONF}"/nextcloud/apps-pkg
-mkdir -p "${FS_NEXTCLOUD_CONF}"/nextcloud/config
-mkdir -p "${FS_NEXTCLOUD_CONF}"/nextcloud/themes
-mkdir -p "${FS_NEXTCLOUD_CONF}"/nextcloud/data
-mkdir -p "${FS_NEXTCLOUD_CONF}"/nginx
-mkdir -p "${FS_NEXTCLOUD_CONF}"/nginx/conf.d
-mkdir -p "${FS_NEXTCLOUD_CONF}"/php-fpm.d
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/nextcloud/apps
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/nextcloud/apps-pkg
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/nextcloud/config
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/nextcloud/themes
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/nextcloud/data
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/nginx
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/nginx/conf.d
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/php-fpm.d
 #mkdir -p "${FS_NEXTCLOUD_CONF}"/redis
-mkdir -p "${FS_NEXTCLOUD_CONF}"/mysql
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/mysql
 
 mkdir -p "${FS_NEXTCLOUD_CONF}"/repo
-mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nextcloud
-mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nextcloud/apps
-mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nextcloud/apps-pkg
-mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nextcloud/config
-mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nextcloud/themes
-mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nextcloud/data
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/home_root
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nextcloud
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nextcloud/apps
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nextcloud/apps-pkg
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nextcloud/config
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nextcloud/themes
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nextcloud/data
 mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nginx
-mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nginx/conf.d
-mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/php-fpm.d
-mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/mysql
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/nginx/conf.d
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/php-fpm.d
+#mkdir -p "${FS_NEXTCLOUD_CONF}"/repo/mysql
+
+#rename from outside of folders in order to mount them inside after
+mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/root" "${FS_NEXTCLOUD_CONF}/root"
+mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/www/nextcloud/apps" "${FS_NEXTCLOUD_CONF}/nextcloud/"
+mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/www/nextcloud/apps-pkg" "${FS_NEXTCLOUD_CONF}/nextcloud/"
+mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/www/nextcloud/config" "${FS_NEXTCLOUD_CONF}/nextcloud/"
+mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/www/nextcloud/themes" "${FS_NEXTCLOUD_CONF}/nextcloud/"
+mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/www/nextcloud/data/*" "${FS_NEXTCLOUD_DATA}"
+cp "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/etc/nginx/nginx.conf" "${FS_NEXTCLOUD_CONF}/repo/nginx/"
+cp -pr "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/etc/nginx/conf.d/" "${FS_NEXTCLOUD_CONF}/repo/nginx/"
+cp -pr "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/etc/php-fpm.d/" "${FS_NEXTCLOUD_CONF}/repo/"
+#mv "${FS_BASE}"/iocage/jail/"${JAIL_NAME}"/usr/local/etc/redis ${FS_NEXTCLOUD_CONF}/usr/local/etc/redis_tmp"
+cp -pr "${FS_BASE}/iocage/jail/${JAIL_NAME}/usr/local/etc/mysql/" "${FS_NEXTCLOUD_CONF}/repo/"
+mv "${FS_BASE}/iocage/jail/${JAIL_NAME}/var/db/mysql/*" "${FS_NEXTCLOUD_CONF}/"
+
 
 #mkdir inside the jail
 echo -e "\nFolder creation inside the jail\n"
@@ -80,12 +96,12 @@ iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/apps
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/apps-pkg
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/config
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/themes
-iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/data
-iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/nginx
-iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/nginx/conf.d
-iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/php-fpm.d
-iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/mysql
-iocage exec "${JAIL_NAME}" mkdir -p /var/db/mysql
+#iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/nextcloud/data
+#iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/nginx
+#iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/nginx/conf.d
+#iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/php-fpm.d
+#iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/mysql
+#iocage exec "${JAIL_NAME}" mkdir -p /var/db/mysql
 iocage exec "${JAIL_NAME}" mkdir -p /mnt/repo
 
 #zfs set primarycache=metadata system_cache/NextCloud_data
@@ -98,99 +114,99 @@ iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/nextcloud/apps-pkg" "/usr/l
 iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/nextcloud/config" "/usr/local/www/nextcloud/config" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/nextcloud/themes" "/usr/local/www/nextcloud/themes" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_DATA}" "/usr/local/www/nextcloud/data" nullfs rw 0 0
-iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/nginx" "/usr/local/etc/nginx" nullfs rw 0 0
-iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/php-fpm.d" "/usr/local/etc/php-fpm.d" nullfs rw 0 0
-iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/mysql" "/usr/local/etc/mysql" nullfs rw 0 0
+#iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/nginx" "/usr/local/etc/nginx" nullfs rw 0 0
+#iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/php-fpm.d" "/usr/local/etc/php-fpm.d" nullfs rw 0 0
+#iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/mysql" "/usr/local/etc/mysql" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "${FS_MYSQL_DATA}/" "/var/db/mysql" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "${FS_NEXTCLOUD_CONF}/repo" "/mnt/repo" nullfs rw 0 0
 
-echo -e "\nCopy jail files if the mounted directory is empty. If not, old data will be used.\n"
-if [ $(iocage exec "${JAIL_NAME}" "ls /root | wc -l") -gt "0" ]; then
-  echo "Copy of /mnt/repo/home_root"
-  iocage exec "${JAIL_NAME}" "cp -pr /root_tmp/* /mnt/repo/home_root"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -p /root_tmp/.* /mnt/repo/home_root"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -pr /root_tmp/* /root"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -p /root_tmp/.* /root"
-  sleep 2
-  #iocage exec "${JAIL_NAME}" "rm -r /root_tmp"
-fi
+#echo -e "\nCopy jail files if the mounted directory is empty. If not, old data will be used.\n"
+#if [ $(iocage exec "${JAIL_NAME}" "ls /root | wc -l") -gt "0" ]; then
+#  echo "Copy of /mnt/repo/home_root"
+#  iocage exec "${JAIL_NAME}" "cp -pr /root_tmp/* /mnt/repo/home_root"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -p /root_tmp/.* /mnt/repo/home_root"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -pr /root_tmp/* /root"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -p /root_tmp/.* /root"
+#  sleep 2
+#  #iocage exec "${JAIL_NAME}" "rm -r /root_tmp"
+#fi
+#
+#if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/apps | wc -l") -gt "0" ]; then
+#  echo "Copy of /usr/local/www/nextcloud/apps"
+#  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/apps_tmp/* /usr/local/www/nextcloud/apps"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -p /usr/local/www/nextcloud/apps_tmp/.* /usr/local/www/nextcloud/apps"
+#  sleep 2
+#  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/apps_tmp"
+#fi
 
-if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/apps | wc -l") -gt "0" ]; then
-  echo "Copy of /usr/local/www/nextcloud/apps"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/apps_tmp/* /usr/local/www/nextcloud/apps"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -p /usr/local/www/nextcloud/apps_tmp/.* /usr/local/www/nextcloud/apps"
-  sleep 2
-  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/apps_tmp"
-fi
-
-if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/apps-pkg | wc -l") -gt "0" ]; then
-  echo "Copy of /usr/local/www/nextcloud/apps-pkg"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/apps-pkg_tmp/* /usr/local/www/nextcloud/apps-pkg"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -p /usr/local/www/nextcloud/apps-pkg_tmp/.* /usr/local/www/nextcloud/apps-pkg"
-  sleep 2
-  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/apps-pkg_tmp"
-fi
-
-if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/themes | wc -l") -gt "0" ]; then
-  echo "Copy of /usr/local/www/nextcloud/themes"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/themes_tmp/* /usr/local/www/nextcloud/themes"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -p /usr/local/www/nextcloud/themes_tmp/.* /usr/local/www/nextcloud/themes"
-  sleep 2
-  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/themes_tmp"
-fi
-
-if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/data | wc -l") -gt "0" ]; then
-  echo "Copy of /usr/local/www/nextcloud/data"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/data_tmp/* /usr/local/www/nextcloud/data"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -p /usr/local/www/nextcloud/data_tmp/.* /usr/local/www/nextcloud/data"
-  sleep 2
-  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/apps_tmp"
-fi
-
-if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/nginx | wc -l") -gt "0" ]; then
-  echo "Copy of /usr/local/etc/nginx"
-  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/nginx_tmp/nginx.conf /mnt/repo/nginx"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/nginx_tmp/conf.d/* /mnt/repo/nginx/conf.d"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/nginx_tmp/* /usr/local/etc/nginx"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/nginx_tmp/.* /usr/local/etc/nginx"
-  sleep 2
-  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/etc/nginx_tmp"
-fi
-
-if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/php-fpm.d" | wc -l) -gt "0" ]; then
-  echo "Copy of /usr/local/etc/php-fpm.d"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/php-fpm.d_tmp/* /mnt/repo/php-fpm.d"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/php-fpm.d_tmp/* /usr/local/etc/php-fpm.d"
-  sleep 2
-  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/etc/php-fpm.d_tmp"
-fi
-if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/mysql | wc -l") -gt "0" ]; then
-  echo "Copy of /usr/local/etc/mysql"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/mysql_tmp/* /mnt/repo/mysql"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/mysql_tmp/.* /mnt/repo/mysql"
-  sleep 2
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/mysql_tmp/* /usr/local/etc/mysql"
-  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/mysql_tmp/.* /usr/local/etc/mysql"
-  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/etc/mysql_tmp"
-fi
-if [ $(iocage exec "${JAIL_NAME}" "ls /var/db/mysql" | wc -l) -gt "0" ]; then
-  echo "Copy of /var/db/mysql"
-  iocage exec "${JAIL_NAME}" "cp -pr /var/db/mysql_tmp/* /var/db/mysql"
-  iocage exec "${JAIL_NAME}" "cp -p /var/db/mysql_tmp/.* /var/db/mysql"
-  #iocage exec "${JAIL_NAME}" "rm -r /var/db/mysql_tmp"
-fi
+#if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/apps-pkg | wc -l") -gt "0" ]; then
+#  echo "Copy of /usr/local/www/nextcloud/apps-pkg"
+#  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/apps-pkg_tmp/* /usr/local/www/nextcloud/apps-pkg"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -p /usr/local/www/nextcloud/apps-pkg_tmp/.* /usr/local/www/nextcloud/apps-pkg"
+#  sleep 2
+#  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/apps-pkg_tmp"
+#fi
+#
+#if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/themes | wc -l") -gt "0" ]; then
+#  echo "Copy of /usr/local/www/nextcloud/themes"
+#  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/themes_tmp/* /usr/local/www/nextcloud/themes"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -p /usr/local/www/nextcloud/themes_tmp/.* /usr/local/www/nextcloud/themes"
+#  sleep 2
+#  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/themes_tmp"
+#fi
+#
+#if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/data | wc -l") -gt "0" ]; then
+#  echo "Copy of /usr/local/www/nextcloud/data"
+#  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/data_tmp/* /usr/local/www/nextcloud/data"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -p /usr/local/www/nextcloud/data_tmp/.* /usr/local/www/nextcloud/data"
+#  sleep 2
+#  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/apps_tmp"
+#fi
+#
+#if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/nginx | wc -l") -gt "0" ]; then
+#  echo "Copy of /usr/local/etc/nginx"
+#  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/nginx_tmp/nginx.conf /mnt/repo/nginx"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/nginx_tmp/conf.d/* /mnt/repo/nginx/conf.d"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/nginx_tmp/* /usr/local/etc/nginx"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/nginx_tmp/.* /usr/local/etc/nginx"
+#  sleep 2
+#  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/etc/nginx_tmp"
+#fi
+#
+#if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/php-fpm.d" | wc -l) -gt "0" ]; then
+#  echo "Copy of /usr/local/etc/php-fpm.d"
+#  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/php-fpm.d_tmp/* /mnt/repo/php-fpm.d"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/php-fpm.d_tmp/* /usr/local/etc/php-fpm.d"
+#  sleep 2
+#  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/etc/php-fpm.d_tmp"
+#fi
+#if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/mysql | wc -l") -gt "0" ]; then
+#  echo "Copy of /usr/local/etc/mysql"
+#  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/mysql_tmp/* /mnt/repo/mysql"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/mysql_tmp/.* /mnt/repo/mysql"
+#  sleep 2
+#  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/mysql_tmp/* /usr/local/etc/mysql"
+#  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/mysql_tmp/.* /usr/local/etc/mysql"
+#  #iocage exec "${JAIL_NAME}" "rm -r /usr/local/etc/mysql_tmp"
+#fi
+#if [ $(iocage exec "${JAIL_NAME}" "ls /var/db/mysql" | wc -l) -gt "0" ]; then
+#  echo "Copy of /var/db/mysql"
+#  iocage exec "${JAIL_NAME}" "cp -pr /var/db/mysql_tmp/* /var/db/mysql"
+#  iocage exec "${JAIL_NAME}" "cp -p /var/db/mysql_tmp/.* /var/db/mysql"
+#  #iocage exec "${JAIL_NAME}" "rm -r /var/db/mysql_tmp"
+#fi
 
 #chown & chmod
 echo "chown -R ${USER}:${GROUP} /usr/local/www"
