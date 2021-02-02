@@ -108,58 +108,58 @@ echo -e "\nCopy jail files if the mounted directory is empty. If not, old data w
 if [ $(iocage exec "${JAIL_NAME}" "ls /root | wc -l") -gt "0" ]; then
   echo "Copy of /mnt/repo/home_root"
   iocage exec "${JAIL_NAME}" "cp -pr /root_tmp/* /mnt/repo/home_root"
-  iocage exec "${JAIL_NAME}" "cp -pr /root_tmp/.* /mnt/repo/home_root"
+  iocage exec "${JAIL_NAME}" "cp -p /root_tmp/.* /mnt/repo/home_root"
   iocage exec "${JAIL_NAME}" "cp -pr /root_tmp/* /root"
-  iocage exec "${JAIL_NAME}" "cp -pr /root_tmp/.* /root"
+  iocage exec "${JAIL_NAME}" "cp -p /root_tmp/.* /root"
   #iocage exec "${JAIL_NAME}" "rm -r /root_tmp"
 fi
 if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/apps | wc -l") -gt "0" ]; then
   echo "Copy of /usr/local/www/nextcloud/apps"
   iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/apps_tmp/* /usr/local/www/nextcloud/apps"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/apps_tmp/.* /usr/local/www/nextcloud/apps"
+  iocage exec "${JAIL_NAME}" "cp -p /usr/local/www/nextcloud/apps_tmp/.* /usr/local/www/nextcloud/apps"
   #iocage exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/apps_tmp"
 fi
 if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/apps-pkg | wc -l") -gt "0" ]; then
   echo "Copy of /usr/local/www/nextcloud/apps-pkg"
   iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/apps-pkg_tmp/* /usr/local/www/nextcloud/apps-pkg"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/apps-pkg_tmp/.* /usr/local/www/nextcloud/apps-pkg"
+  iocage exec "${JAIL_NAME}" "cp -p /usr/local/www/nextcloud/apps-pkg_tmp/.* /usr/local/www/nextcloud/apps-pkg"
   #iocage exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/apps-pkg_tmp"
 fi
 if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/www/nextcloud/themes | wc -l") -gt "0" ]; then
   echo "Copy of /usr/local/www/nextcloud/themes"
   iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/themes_tmp/* /usr/local/www/nextcloud/themes"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/www/nextcloud/themes_tmp/.* /usr/local/www/nextcloud/themes"
+  iocage exec "${JAIL_NAME}" "cp -p /usr/local/www/nextcloud/themes_tmp/.* /usr/local/www/nextcloud/themes"
   #iocage exec "${JAIL_NAME}" "rm -r /usr/local/www/nextcloud/themes_tmp"
 fi
 if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/nginx | wc -l") -gt "0" ]; then
   echo "Copy of /usr/local/etc/nginx"
   iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/nginx_tmp/nginx.conf /mnt/repo/nginx"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/nginx_tmp/nginx/conf.d/* /mnt/repo/nginx/conf.d"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/nginx_tmp/nginx/conf.d/.* /mnt/repo/nginx/conf.d"
+  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/nginx_tmp/conf.d/* /mnt/repo/nginx/conf.d"
+  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/nginx_tmp/conf.d/.* /mnt/repo/nginx/conf.d"
   iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/nginx_tmp/* /usr/local/etc/nginx"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/nginx_tmp/.* /usr/local/etc/nginx"
+  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/nginx_tmp/.* /usr/local/etc/nginx"
   #iocage exec "${JAIL_NAME}" "rm -r /usr/local/etc/nginx_tmp"
 fi
 if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/php-fpm.d" | wc -l) -gt "0" ]; then
   echo "Copy of /usr/local/etc/php-fpm.d"
   iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/php-fpm.d_tmp/* /mnt/repo/php-fpm.d"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/php-fpm.d_tmp/.* /mnt/repo/php-fpm.d"
+  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/php-fpm.d_tmp/.* /mnt/repo/php-fpm.d"
   iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/php-fpm.d_tmp/* /usr/local/etc/php-fpm.d"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/php-fpm.d_tmp/.* /usr/local/etc/php-fpm.d"
+  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/php-fpm.d_tmp/.* /usr/local/etc/php-fpm.d"
   #iocage exec "${JAIL_NAME}" "rm -r /usr/local/etc/php-fpm.d_tmp"
 fi
 if [ $(iocage exec "${JAIL_NAME}" "ls /usr/local/etc/mysql | wc -l") -gt "0" ]; then
   echo "Copy of /usr/local/etc/mysql"
   iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/mysql_tmp/* /mnt/repo/mysql"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/mysql_tmp/.* /mnt/repo/mysql"
+  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/mysql_tmp/.* /mnt/repo/mysql"
   iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/mysql_tmp/* /usr/local/etc/mysql"
-  iocage exec "${JAIL_NAME}" "cp -pr /usr/local/etc/mysql_tmp/.* /usr/local/etc/mysql"
+  iocage exec "${JAIL_NAME}" "cp -p /usr/local/etc/mysql_tmp/.* /usr/local/etc/mysql"
   #iocage exec "${JAIL_NAME}" "rm -r /usr/local/etc/mysql_tmp"
 fi
 if [ $(iocage exec "${JAIL_NAME}" "ls /var/db/mysql" | wc -l) -gt "0" ]; then
   echo "Copy of /var/db/mysql"
   iocage exec "${JAIL_NAME}" "cp -pr /var/db/mysql_tmp/* /var/db/mysql"
-  iocage exec "${JAIL_NAME}" "cp -pr /var/db/mysql_tmp/.* /var/db/mysql"
+  iocage exec "${JAIL_NAME}" "cp -p /var/db/mysql_tmp/.* /var/db/mysql"
   #iocage exec "${JAIL_NAME}" "rm -r /var/db/mysql_tmp"
 fi
 
