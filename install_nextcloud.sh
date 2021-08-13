@@ -1,16 +1,16 @@
 #/bin/csh
 #iocage jail creation
 JAIL_NAME="nextcloud"
-RELEASE="11.4"
-IP_ADDR="172.16.0.6"
-MASK_ADDR="27"
+RELEASE="12.2"
+IP_ADDR="172.16.0.2"
+MASK_ADDR="30"
 DEFAULT_ROUTER="172.16.0.1"
 PORT_GUEST="80"
-PORT_HOST="8415"
+PORT_HOST="8282"
 DHCP="0"
 PHP_PACKAGES="php74 php74-bz2 php74-ctype php74-curl php74-dom php74-exif php74-fileinfo php74-filter php74-gd php74-iconv php74-intl php74-json php74-ldap php74-mbstring php74-opcache php74-openssl php74-pdo php74-pdo_mysql php74-pecl-APCu php74-pecl-imagick php74-pecl-redis php74-posix php74-session php74-simplexml php74-xml php74-xmlreader php74-xmlwriter php74-xsl php74-zip php74-zlib php74-bcmath php74-gmp"
-#PACKAGES="nano wget ca_root_nss nginx mariadb104-server redis tree sudo git nextcloud-php74 ${PHP_PACKAGES}"
-PACKAGES="nano wget ca_root_nss nginx mariadb104-server redis tree sudo git nextcloud-php74"
+PACKAGES="nano wget ca_root_nss nginx mysql80-server redis tree sudo git ${PHP_PACKAGES}"
+#PACKAGES="nano wget ca_root_nss nginx mariadb104-server redis tree sudo git nextcloud-php74"
 SYSRC="nginx mysql php_fpm redis"
 SERVICES=$( echo -e "nginx\nmysql-server\nphp-fpm\nredis" )
  
@@ -99,10 +99,10 @@ iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nextcloud/apps-
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nextcloud/config" "/usr/local/www/nextcloud/config" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nextcloud/themes" "/usr/local/www/nextcloud/themes" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_data" "/usr/local/www/nextcloud/data" nullfs rw 0 0
-iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/home_root" "/root" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/root" "/root" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/nginx" "/usr/local/etc/nginx" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/php-fpm.d" "/usr/local/etc/php-fpm.d" nullfs rw 0 0
-iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_mysql" "/var/db/mysql" nullfs rw 0 0
+iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_mysql/mysql" "/var/db/mysql" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/mysql" "/usr/local/etc/mysql" nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "/mnt/system_cache/NextCloud_conf/repo" "/mnt/repo" nullfs rw 0 0
 
@@ -114,8 +114,8 @@ iocage exec "${JAIL_NAME}" "pkg update"
 iocage exec "${JAIL_NAME}" "pkg upgrade"
 iocage exec "${JAIL_NAME}" "pkg install -y wget ${PACKAGES}"
 
-#iocage exec "${JAIL_NAME}" "cd /tmp && wget https://download.nextcloud.com/server/releases/latest.tar.bz2"
-#iocage exec "${JAIL_NAME}" "tar -xf /tmp/latest.tar.bz2 -C /usr/local/www"
+iocage exec "${JAIL_NAME}" "cd /tmp && wget https://download.nextcloud.com/server/releases/latest.tar.bz2"
+iocage exec "${JAIL_NAME}" "tar -xf /tmp/latest.tar.bz2 -C /usr/local/www"
 
 #chown & chmod
 iocage exec "${JAIL_NAME}" "chown -R ${USER}:${GROUP} /usr/local/www"
