@@ -9,7 +9,7 @@ PORT_GUEST="80"
 PORT_HOST="8282"
 DHCP="0"
 PHP_PACKAGES="php74 php74-bz2 php74-ctype php74-curl php74-dom php74-exif php74-fileinfo php74-filter php74-gd php74-iconv php74-intl php74-json php74-ldap php74-mbstring php74-opcache php74-openssl php74-pdo php74-pdo_mysql php74-pecl-APCu php74-pecl-imagick php74-pecl-redis php74-posix php74-session php74-simplexml php74-xml php74-xmlreader php74-xmlwriter php74-xsl php74-zip php74-zlib php74-bcmath php74-gmp"
-PACKAGES="nano wget ca_root_nss nginx mysql80-server redis tree sudo git ${PHP_PACKAGES}"
+PACKAGES="nano wget ca_root_nss nginx mysql57-server redis tree sudo git ${PHP_PACKAGES}"
 #PACKAGES="nano wget ca_root_nss nginx mariadb104-server redis tree sudo git nextcloud-php74"
 SYSRC="nginx mysql php_fpm redis"
 SERVICES=$( echo -e "nginx\nmysql-server\nphp-fpm\nredis" )
@@ -80,11 +80,11 @@ iocage exec "${JAIL_NAME}" mkdir -p /mnt/repo
 #zfs set primarycache=metadata system_cache/NextCloud_data
 
 #create user and group
-#iocage exec "${JAIL_NAME}" pw groupadd -n "${GROUP}" -g "${GID}"
+iocage exec "${JAIL_NAME}" pw groupadd -n "${GROUP}" -g "${GID}"
 iocage exec "${JAIL_NAME}" "pw groupadd -n ${GROUP2} -g ${GID2}"
-#iocage exec "${JAIL_NAME}" pw useradd -n "${USER}" -u "${UID}" -d /nonexistent -s /usr/sbin/nologin
+iocage exec "${JAIL_NAME}" pw useradd -n "${USER}" -u "${UID}" -d /nonexistent -s /usr/sbin/nologin
 iocage exec "${JAIL_NAME}" "pw useradd -n ${USER2} -u ${UID2} -d /nonexistent -s /usr/sbin/nologin"
-#iocage exec "${JAIL_NAME}" pw groupmod "${GROUP}" -m "${USER}"
+iocage exec "${JAIL_NAME}" pw groupmod "${GROUP}" -m "${USER}"
 iocage exec "${JAIL_NAME}" "pw groupmod ${GROUP2} -m ${USER2}"
 
 #chown & chmod
